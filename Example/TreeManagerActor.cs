@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Example
+namespace AkkaDotNetExample
 {
     public class TreeManagerActor : ReceiveActor, IWithUnboundedStash
     {

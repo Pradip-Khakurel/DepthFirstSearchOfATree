@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 
-namespace Example
+namespace AkkaDotNetExample
 {
     class Program
     {
