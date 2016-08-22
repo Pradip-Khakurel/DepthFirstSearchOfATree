@@ -7,8 +7,8 @@
     <ProjectGuid>{2DF77D33-10BD-4029-8F21-A73742AF5C72}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AkkaDotNetExample</RootNamespace>
-    <AssemblyName>AkkaDotNetExample</AssemblyName>
+    <RootNamespace>DepthFirstSearchOfATree.AkkaDotNetExample</RootNamespace>
+    <AssemblyName>DepthFirstSearchOfATree.AkkaDotNetExample</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

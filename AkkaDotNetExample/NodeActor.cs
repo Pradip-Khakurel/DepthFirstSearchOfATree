@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AkkaDotNetExample
+namespace DepthFirstSearchOfATree.AkkaDotNetExample
 {
     public class NodeActor : ReceiveActor
     {
@@ -25,6 +25,8 @@ namespace AkkaDotNetExample
         public class VisitNodeMessage
         {
             public int VisitingNodeIndex { get; }
+
+            public VisitNodeMessage() : this(0) { }
 
             public VisitNodeMessage(int visitingNodeIndex)
             {
