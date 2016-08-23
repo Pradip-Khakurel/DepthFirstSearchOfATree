@@ -91,10 +91,15 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         private void VisitNodeHandler(VisitNodeMessage msg)
         {
             Console.WriteLine($"Visiting {nodeName}", nodeName);
-
-            children.FirstOrDefault()?.Tell(new VisitNodeMessage(0));
-
-            Sender.Tell(new VisitNodeCompletedMessage(msg));
+            
+            if(children.Count == 0)
+            {
+                Sender.Tell(new VisitNodeCompletedMessage(msg));
+            }
+            else
+            {
+                children.First().Tell(new VisitNodeMessage(0));
+            }
         }
 
         private void VisitNodeCompletedHandler(VisitNodeCompletedMessage msg)
