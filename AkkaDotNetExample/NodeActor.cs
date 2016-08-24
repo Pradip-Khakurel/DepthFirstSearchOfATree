@@ -138,21 +138,21 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             else
             {
                 var firstChild = children.First();
-                var memo = new VisitMemo(Self, firstChild);
-                var editedMemos = msg.Memos.Push(memo);
+                var nodeMemo = new VisitMemo(Self, firstChild);
+                var editedNodeMemos = msg.Memos.Push(nodeMemo);
 
-                firstChild.Tell(new VisitMessage(editedMemos));
+                firstChild.Tell(new VisitMessage(editedNodeMemos));
             }
         }
 
         private void VisitNodeCompletedHandler(VisitCompletedMessage msg)
         {
-            var memos = msg.VisitMessage.Memos;
-            var visitedChild = memos.Peek().Child;
+            var nodeMemos = msg.VisitMessage.Memos;
+            var visitedChild = nodeMemos.Peek().Child;
             var nextChildindex = children.IndexOf(visitedChild) + 1;
 
             // get the parent memo from the stack
-            var parentMemos = memos.Pop();
+            var parentMemos = nodeMemos.Pop();
 
             if (children.Count() > nextChildindex)
             {
