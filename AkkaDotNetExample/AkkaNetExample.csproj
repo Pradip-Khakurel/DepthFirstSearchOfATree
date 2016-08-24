@@ -59,6 +59,7 @@
     <Compile Include="NodeActor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadOnlyStack.cs" />
     <Compile Include="TreeManagerActor.cs" />
   </ItemGroup>
   <ItemGroup>
