@@ -71,7 +71,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
             if (addingNodes == 0)
             {
-                root.Tell(new NodeActor.VisitMessage(Self, 0));
+                root.Tell(new NodeActor.VisitMessage(Self, root));
                 visitingNodes = visitingNodes + 1;
             }
             else

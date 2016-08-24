@@ -13,13 +13,13 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         /// </summary>
         public class VisitMemo
         {
-            public int NodeIndex { get; }
+            public IActorRef Child { get; }
 
             public IActorRef Parent { get; }
 
-            public VisitMemo(IActorRef parent, int nodeIndex)
+            public VisitMemo(IActorRef parent, IActorRef child)
             {
-                NodeIndex = nodeIndex;
+                Child = child;
                 Parent = parent;
             }
         }
@@ -54,9 +54,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
                 Memos = new ReadOnlyStack<VisitMemo>();
             }
 
-            public VisitMessage(IActorRef parent, int nodeIndex)
+            public VisitMessage(IActorRef parent, IActorRef child)
             {
-                var memo = new VisitMemo(parent, nodeIndex);
+                var memo = new VisitMemo(parent, child);
                 Memos = new ReadOnlyStack<VisitMemo>().Push(memo);
             }
 
@@ -67,7 +67,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         }
 
         /// <summary>
-        /// Message passed when all children of a node (and itself) has been visited
+        /// Message passed to a when all children of a node (and itself) has been visited
         /// </summary>
         public class VisitCompletedMessage
         {
@@ -137,22 +137,24 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
             else
             {
-                var memo = new VisitMemo(Self, 0);
+                var child = children.First();
+                var memo = new VisitMemo(Self, child);
                 var newMemos = msg.Memos.Push(memo);
-                children.First().Tell(new VisitMessage(newMemos));
+                child.Tell(new VisitMessage(newMemos));
             }
         }
 
         private void VisitNodeCompletedHandler(VisitCompletedMessage msg)
         {
             var memos = msg.VisitMessage.Memos;
-            var newVisitedIndex = memos.IsEmpty() ? 1 : memos.Peek().NodeIndex + 1;
+            var newChildIndex = children.IndexOf(memos.Peek().Child) + 1;
             
-            if (children.Count() > newVisitedIndex)
+            if (children.Count() > newChildIndex)
             {
-                var newMemos = memos.Pop().Push(new VisitMemo(Self, newVisitedIndex)); 
+                var nextChild = children[newChildIndex];
+                var newMemos = memos.Pop().Push(new VisitMemo(Self, nextChild));
 
-                children[newVisitedIndex].Tell(new VisitMessage(newMemos));
+                nextChild.Tell(new VisitMessage(newMemos));
             }
             else
             {
