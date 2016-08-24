@@ -137,29 +137,31 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
             else
             {
-                var child = children.First();
-                var memo = new VisitMemo(Self, child);
-                var newMemos = msg.Memos.Push(memo);
-                child.Tell(new VisitMessage(newMemos));
+                var firstChild = children.First();
+                var memo = new VisitMemo(Self, firstChild);
+                var editedMemos = msg.Memos.Push(memo);
+
+                firstChild.Tell(new VisitMessage(editedMemos));
             }
         }
 
         private void VisitNodeCompletedHandler(VisitCompletedMessage msg)
         {
             var memos = msg.VisitMessage.Memos;
-            var newChildIndex = children.IndexOf(memos.Peek().Child) + 1;
+            var visitedChild = memos.Peek().Child;
+            var nextChildindex = children.IndexOf(visitedChild) + 1;
             
-            if (children.Count() > newChildIndex)
+            if (children.Count() > nextChildindex)
             {
-                var nextChild = children[newChildIndex];
-                var newMemos = memos.Pop().Push(new VisitMemo(Self, nextChild));
+                var nextChild = children[nextChildindex];
+                var exitedMemos = memos.Pop().Push(new VisitMemo(Self, nextChild));
 
-                nextChild.Tell(new VisitMessage(newMemos));
+                nextChild.Tell(new VisitMessage(exitedMemos));
             }
             else
             {
-                var memo = memos.Pop().Peek();
-                memo.Parent.Tell(new VisitCompletedMessage(new VisitMessage(memos.Pop())));
+                var nodeMemo = memos.Pop().Peek();
+                nodeMemo.Parent.Tell(new VisitCompletedMessage(new VisitMessage(memos.Pop())));
             }             
         }
         #endregion
