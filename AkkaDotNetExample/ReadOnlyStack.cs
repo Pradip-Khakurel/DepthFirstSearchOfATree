@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace DepthFirstSearchOfATree.AkkaDotNetExample
 {
+    /// <summary>
+    /// This is an overly simplified ReadOnlyStack
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class ReadOnlyStack<T> : IEnumerable<T>
     {
         private readonly IList<T> list; // only assigned once; 
