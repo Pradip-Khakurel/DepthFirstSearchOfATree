@@ -18,7 +18,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
        
         private ReadOnlyStack(IEnumerable<T> enumerable)
         {
-            this.list = new List<T>(enumerable);
+            list = new List<T>(enumerable);
         }
 
         public ReadOnlyStack<T> Push(T item)
