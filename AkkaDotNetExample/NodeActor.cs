@@ -139,9 +139,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             {
                 var firstChild = children.First();
                 var nodeMemo = new VisitMemo(Self, firstChild);
-                var editedNodeMemos = msg.Memos.Push(nodeMemo);
+                var nodeMemos = msg.Memos.Push(nodeMemo);
 
-                firstChild.Tell(new VisitMessage(editedNodeMemos));
+                firstChild.Tell(new VisitMessage(nodeMemos));
             }
         }
 
@@ -157,9 +157,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             if (children.Count() > nextChildindex)
             {
                 var nextChild = children[nextChildindex];
-                var editedMemos = parentMemos.Push(new VisitMemo(Self, nextChild));
+                var newNodeMemos = parentMemos.Push(new VisitMemo(Self, nextChild));
 
-                nextChild.Tell(new VisitMessage(editedMemos));
+                nextChild.Tell(new VisitMessage(newNodeMemos));
             }
             else
             {
