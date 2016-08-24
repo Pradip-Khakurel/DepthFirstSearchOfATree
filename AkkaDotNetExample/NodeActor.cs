@@ -32,13 +32,13 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         {
             public string ChildName { get; }
             public string ParentName { get; }
-            public IActorRef Sender { get; }
+            public IActorRef TreeManager { get; }
 
-            public AddMessage(string childName, string parentName, IActorRef sender)
+            public AddMessage(string childName, string parentName, IActorRef treeManager)
             {
                 ChildName = childName;
                 ParentName = parentName;
-                Sender = sender;
+                TreeManager = treeManager;
             }
         }
 
@@ -119,7 +119,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
                 var child = system.ActorOf(Props(this.system, msg.ChildName), msg.ChildName);
                 children.Add(child);
 
-                msg.Sender.Tell(new AddCompletedMessage());
+                msg.TreeManager.Tell(new AddCompletedMessage());
             }
             else
             {
