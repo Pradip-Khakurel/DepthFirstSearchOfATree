@@ -10,7 +10,11 @@ namespace DepthFirstSearchOfATree.RecursiveSingleThreadedExample
     { 
         private List<TreeNode> children = new List<TreeNode>();
 
-        public IEnumerable<TreeNode> Children { get { return children;  } }
+        public IEnumerable<TreeNode> Children
+        {
+            get { return children; }
+        }
+
         public string NodeName { get; }
 
         public TreeNode(string nodeName)

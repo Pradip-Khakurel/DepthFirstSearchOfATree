@@ -14,7 +14,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         public class AddRequest
         {
             public string ChildName { get; }
+
             public string ParentName { get; }
+
             public IActorRef TreeManager { get; }
 
             public AddRequest(string childName, string parentName, IActorRef treeManager)
