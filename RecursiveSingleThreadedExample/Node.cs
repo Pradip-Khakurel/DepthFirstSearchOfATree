@@ -8,11 +8,11 @@ namespace DepthFirstSearchOfATree.RecursiveSingleThreadedExample
 {
     public class TreeNode
     { 
-        private List<TreeNode> children = new List<TreeNode>();
+        private List<TreeNode> _children = new List<TreeNode>();
 
         public IEnumerable<TreeNode> Children
         {
-            get { return children; }
+            get { return _children; }
         }
 
         public string NodeName { get; }
@@ -26,7 +26,7 @@ namespace DepthFirstSearchOfATree.RecursiveSingleThreadedExample
         {
             Console.WriteLine($"Adding {node.NodeName} in node {NodeName}");
 
-            children.Add(node);
+            _children.Add(node);
         }
     }
 }

@@ -11,15 +11,15 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
     {
         public IStash Stash { get; set; }
 
-        private readonly IActorRef root;
-        private readonly ActorSystem system;
-        private int addingNodes = 0;
-        private int visitingNodes = 0;
+        private readonly IActorRef _root;
+        private readonly ActorSystem _system;
+        private int _addingNodes = 0;
+        private int _visitingNodes = 0;
 
         public TreeManagerActor(ActorSystem system, string rootNodeName)
         {
-            this.system = system;
-            root = system.ActorOf(NodeActor.Props(system, rootNodeName), rootNodeName);
+            _system = system;
+            _root = system.ActorOf(NodeActor.Props(system, rootNodeName), rootNodeName);
 
             NormalBehavior();
         }
@@ -54,10 +54,10 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         private void AddRequestHandler(NodeActor.AddRequest request)
         {
-            if(visitingNodes == 0)
+            if(_visitingNodes == 0)
             {
-                root.Tell(request);
-                addingNodes = addingNodes + 1;
+                _root.Tell(request);
+                _addingNodes = _addingNodes + 1;
             }
             else
             {
@@ -69,10 +69,10 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         private void VisitRequestHandler(NodeActor.VisitRequest request)
         {
 
-            if (addingNodes == 0)
+            if (_addingNodes == 0)
             {
-                root.Tell(new NodeActor.VisitRequest(Self, root, null));
-                visitingNodes = visitingNodes + 1;
+                _root.Tell(new NodeActor.VisitRequest(Self, _root, null));
+                _visitingNodes = _visitingNodes + 1;
             }
             else
             {
@@ -83,9 +83,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         private void AddResultHandler(NodeActor.AddResult result)
         {
-            addingNodes = addingNodes - 1;
+            _addingNodes = _addingNodes - 1;
 
-            if (addingNodes == 0)
+            if (_addingNodes == 0)
             {
                 Stash.UnstashAll();
                 Become(() => NormalBehavior());
@@ -94,9 +94,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         private void VisitResultHandler(NodeActor.VisitResult result)
         {
-            visitingNodes = visitingNodes - 1;
+            _visitingNodes = _visitingNodes - 1;
 
-            if (visitingNodes == 0)
+            if (_visitingNodes == 0)
             {
                 Stash.UnstashAll();
                 Become(() => NormalBehavior());

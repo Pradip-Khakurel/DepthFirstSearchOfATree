@@ -71,14 +71,14 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         
         #endregion
 
-        private List<IActorRef> children { get; set; } = new List<IActorRef>();
-        private readonly ActorSystem system = null;
-        private readonly string nodeName = null;
+        private List<IActorRef> _children { get; set; } = new List<IActorRef>();
+        private readonly ActorSystem _system = null;
+        private readonly string _nodeName = null;
 
         public NodeActor(ActorSystem system, string nodeName)
         {
-            this.nodeName = nodeName;
-            this.system = system;
+            _nodeName = nodeName;
+            _system = system;
 
             NormalBehavior();
         }
@@ -97,32 +97,32 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         #region handlers
         public void AddRequestHandler(AddRequest request)
         {
-            if (request.ParentName == nodeName)
+            if (request.ParentName == _nodeName)
             {
-                Console.WriteLine($"Adding {request.ChildName} in node {nodeName}");
+                Console.WriteLine($"Adding {request.ChildName} in node {_nodeName}");
 
-                var child = system.ActorOf(Props(this.system, request.ChildName), request.ChildName);
-                children.Add(child);
+                var child = _system.ActorOf(Props(_system, request.ChildName), request.ChildName);
+                _children.Add(child);
 
                 request.TreeManager.Tell(new AddResult());
             }
             else
             {
-                children.ForEach(c => c.Tell(request));
+                _children.ForEach(c => c.Tell(request));
             }
         }
 
         private void VisitRequestHandler(VisitRequest request)
         {
-            Console.WriteLine($"Visiting {nodeName}", nodeName);
+            Console.WriteLine($"Visiting {_nodeName}", _nodeName);
 
-            if (children.Count == 0)
+            if (_children.Count == 0)
             {
                 Sender.Tell(new VisitResult(request));
             }
             else
             {
-                var firstChild = children.First();
+                var firstChild = _children.First();
                 var thisActorRequest = new VisitRequest(Self, firstChild, request);
 
                 firstChild.Tell(thisActorRequest);
@@ -133,14 +133,14 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         {
             var thisActorRequest = result.Request;
             var visitedChild = thisActorRequest.Recipient;
-            var nextChildindex = children.IndexOf(visitedChild) + 1;
+            var nextChildindex = _children.IndexOf(visitedChild) + 1;
 
             // the previous request is the request of the parent node
             var parentRequest = thisActorRequest.Previous;
 
-            if (children.Count() > nextChildindex)
+            if (_children.Count() > nextChildindex)
             {
-                var nextChild = children[nextChildindex];
+                var nextChild = _children[nextChildindex];
                 var newRequest = new VisitRequest(Self, nextChild, parentRequest);
 
                 nextChild.Tell(newRequest);
