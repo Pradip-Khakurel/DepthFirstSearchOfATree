@@ -28,13 +28,13 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         public void NormalBehavior()
         {
-            Receive<NodeActor.AddRequest>(m => AddHandler(m));
+            Receive<NodeActor.AddRequest>(m => AddRequestHandler(m));
 
-            Receive<NodeActor.VisitRequest>(m => VisitHandler(m));
+            Receive<NodeActor.VisitRequest>(m => VisitRequestHandler(m));
 
-            Receive<NodeActor.AddResult>(m => AddCompletedHandler(m));
+            Receive<NodeActor.AddResult>(m => AddResultHandler(m));
 
-            Receive<NodeActor.VisitResult>(m => VisitSuccessdHandler(m));
+            Receive<NodeActor.VisitResult>(m => VisitResultHandler(m));
         }
 
         private void BusyBehavior()
@@ -43,16 +43,16 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
             Receive<NodeActor.VisitRequest>(m => Stash.Stash());
 
-            Receive<NodeActor.AddResult>(m => AddCompletedHandler(m));
+            Receive<NodeActor.AddResult>(m => AddResultHandler(m));
 
-            Receive<NodeActor.VisitResult>(m => VisitSuccessdHandler(m));
+            Receive<NodeActor.VisitResult>(m => VisitResultHandler(m));
         }
 
         #endregion behaviors
 
         #region handlers
 
-        private void AddHandler(NodeActor.AddRequest request)
+        private void AddRequestHandler(NodeActor.AddRequest request)
         {
             if(visitingNodes == 0)
             {
@@ -66,7 +66,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void VisitHandler(NodeActor.VisitRequest request)
+        private void VisitRequestHandler(NodeActor.VisitRequest request)
         {
 
             if (addingNodes == 0)
@@ -81,7 +81,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void AddCompletedHandler(NodeActor.AddResult success)
+        private void AddResultHandler(NodeActor.AddResult result)
         {
             addingNodes = addingNodes - 1;
 
@@ -92,7 +92,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void VisitSuccessdHandler(NodeActor.VisitResult sucsess)
+        private void VisitResultHandler(NodeActor.VisitResult result)
         {
             visitingNodes = visitingNodes - 1;
 
