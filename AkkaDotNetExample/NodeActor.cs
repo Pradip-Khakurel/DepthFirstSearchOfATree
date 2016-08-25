@@ -7,34 +7,17 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 {
     public class NodeActor : ReceiveActor
     {
-
-        /// <summary>
-        /// Memos about the visit of nodes
-        /// </summary>
-        public class VisitMemo
-        {
-            public IActorRef Child { get; }
-
-            public IActorRef Parent { get; }
-
-            public VisitMemo(IActorRef parent, IActorRef child)
-            {
-                Child = child;
-                Parent = parent;
-            }
-        }
-
         #region messages
         /// <summary>
         /// Message passed to add a Node
         /// </summary>
-        public class AddMessage
+        public class AddRequest
         {
             public string ChildName { get; }
             public string ParentName { get; }
             public IActorRef TreeManager { get; }
 
-            public AddMessage(string childName, string parentName, IActorRef treeManager)
+            public AddRequest(string childName, string parentName, IActorRef treeManager)
             {
                 ChildName = childName;
                 ParentName = parentName;
@@ -43,46 +26,46 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         }
 
         /// <summary>
-        /// Message passed to visit a node
+        /// Message passed to visit a child node
         /// </summary>
-        public class VisitMessage
+        public class VisitRequest
         {   
-            public ReadOnlyStack<VisitMemo> Memos { get; }
+            public IActorRef Sender { get; }
 
-            public VisitMessage()
+            public IActorRef Recipient { get; }
+
+            public VisitRequest Previous { get;  }
+
+            public VisitRequest()
             {
-                Memos = new ReadOnlyStack<VisitMemo>();
+                Previous = null;
             }
 
-            public VisitMessage(IActorRef parent, IActorRef child)
+            public VisitRequest(IActorRef sender, IActorRef recipient, VisitRequest previous)
             {
-                var memo = new VisitMemo(parent, child);
-                Memos = new ReadOnlyStack<VisitMemo>().Push(memo);
-            }
-
-            public VisitMessage(ReadOnlyStack<VisitMemo> memos)
-            {
-                Memos = memos;
+                Previous = previous;
+                Sender = sender;
+                Recipient = recipient;
             }
         }
 
         /// <summary>
         /// Message passed to a when all children of a node (and itself) has been visited
         /// </summary>
-        public class VisitCompletedMessage
+        public class VisitSuccess
         {
-            public VisitMessage VisitMessage { get; }
+            public VisitRequest Request { get; }
 
-            public VisitCompletedMessage(VisitMessage visitMessage)
+            public VisitSuccess(VisitRequest request)
             {
-                VisitMessage = visitMessage;
+                Request = request;
             }
         }
 
         /// <summary>
         /// Message passed when a new node has been created and added to the tree
         /// </summary>
-        public class AddCompletedMessage { }
+        public class AddSuccess { }
         
         #endregion
 
@@ -95,76 +78,74 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             this.nodeName = nodeName;
             this.system = system;
 
-            NormalBehavior();
+            Normal();
         }
 
         #region behaviors
-        private void NormalBehavior()
+        private void Normal()
         {
-            Receive<AddMessage>(m => AddNodeHandler(m));
+            Receive<AddRequest>(m => AddNodeHandler(m));
 
-            Receive<VisitMessage>(m => VisitNodeHandler(m));
+            Receive<VisitRequest>(m => VisitNodeHandler(m));
 
-            Receive<VisitCompletedMessage>(m => VisitNodeCompletedHandler(m));
+            Receive<VisitSuccess>(m => VisitNodeSucessHandler(m));
         }
         #endregion behaviors
 
         #region handlers
-        public void AddNodeHandler(AddMessage msg)
+        public void AddNodeHandler(AddRequest request)
         {
-            if (msg.ParentName == nodeName)
+            if (request.ParentName == nodeName)
             {
-                Console.WriteLine($"Adding {msg.ChildName} in node {nodeName}");
+                Console.WriteLine($"Adding {request.ChildName} in node {nodeName}");
 
-                var child = system.ActorOf(Props(this.system, msg.ChildName), msg.ChildName);
+                var child = system.ActorOf(Props(this.system, request.ChildName), request.ChildName);
                 children.Add(child);
 
-                msg.TreeManager.Tell(new AddCompletedMessage());
+                request.TreeManager.Tell(new AddSuccess());
             }
             else
             {
-                children.ForEach(c => c.Tell(msg));
+                children.ForEach(c => c.Tell(request));
             }
         }
 
-        private void VisitNodeHandler(VisitMessage msg)
+        private void VisitNodeHandler(VisitRequest request)
         {
             Console.WriteLine($"Visiting {nodeName}", nodeName);
 
             if (children.Count == 0)
             {
-                Sender.Tell(new VisitCompletedMessage(msg));
+                Sender.Tell(new VisitSuccess(request));
             }
             else
             {
                 var firstChild = children.First();
-                var nodeMemo = new VisitMemo(Self, firstChild);
-                var nodeMemos = msg.Memos.Push(nodeMemo);
+                var nodeMessage = new VisitRequest(Self, firstChild, request);
 
-                firstChild.Tell(new VisitMessage(nodeMemos));
+                firstChild.Tell(nodeMessage);
             }
         }
 
-        private void VisitNodeCompletedHandler(VisitCompletedMessage msg)
+        private void VisitNodeSucessHandler(VisitSuccess sucesss)
         {
-            var nodeMemos = msg.VisitMessage.Memos;
-            var visitedChild = nodeMemos.Peek().Child;
+            var nodeMessage = sucesss.Request;
+            var visitedChild = nodeMessage.Recipient;
             var nextChildindex = children.IndexOf(visitedChild) + 1;
 
-            // get the parent memo from the stack
-            var parentMemos = nodeMemos.Pop();
+            // get the linked list
+            var parentMsg = nodeMessage.Previous;
 
             if (children.Count() > nextChildindex)
             {
                 var nextChild = children[nextChildindex];
-                var newNodeMemos = parentMemos.Push(new VisitMemo(Self, nextChild));
+                var newNodeMsg = new VisitRequest(Self, nextChild, parentMsg);
 
-                nextChild.Tell(new VisitMessage(newNodeMemos));
+                nextChild.Tell(newNodeMsg);
             }
             else
             {
-                var parentMemo = parentMemos.Peek();
-                parentMemo.Parent.Tell(new VisitCompletedMessage(new VisitMessage(memos.Pop())));
+                parentMsg.Sender.Tell(new VisitSuccess(parentMsg));
             }             
         }
         #endregion

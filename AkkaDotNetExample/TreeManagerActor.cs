@@ -28,35 +28,35 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         public void NormalBehavior()
         {
-            Receive<NodeActor.AddMessage>(m => AddNodeHandler(m));
+            Receive<NodeActor.AddRequest>(m => AddHandler(m));
 
-            Receive<NodeActor.VisitMessage>(m => VisitNodeHandler(m));
+            Receive<NodeActor.VisitRequest>(m => VisitHandler(m));
 
-            Receive<NodeActor.AddCompletedMessage>(m => AddNodeCompletedHandler(m));
+            Receive<NodeActor.AddSuccess>(m => AddCompletedHandler(m));
 
-            Receive<NodeActor.VisitCompletedMessage>(m => VisitNodeCompletedHandler(m));
+            Receive<NodeActor.VisitSuccess>(m => VisitSuccessdHandler(m));
         }
 
         private void BusyBehavior()
         {
-            Receive<NodeActor.AddMessage>(m => Stash.Stash());
+            Receive<NodeActor.AddRequest>(m => Stash.Stash());
 
-            Receive<NodeActor.VisitMessage>(m => Stash.Stash());
+            Receive<NodeActor.VisitRequest>(m => Stash.Stash());
 
-            Receive<NodeActor.AddCompletedMessage>(m => AddNodeCompletedHandler(m));
+            Receive<NodeActor.AddSuccess>(m => AddCompletedHandler(m));
 
-            Receive<NodeActor.VisitCompletedMessage>(m => VisitNodeCompletedHandler(m));
+            Receive<NodeActor.VisitSuccess>(m => VisitSuccessdHandler(m));
         }
 
         #endregion behaviors
 
         #region handlers
 
-        private void AddNodeHandler(NodeActor.AddMessage msg)
+        private void AddHandler(NodeActor.AddRequest request)
         {
             if(visitingNodes == 0)
             {
-                root.Tell(msg);
+                root.Tell(request);
                 addingNodes = addingNodes + 1;
             }
             else
@@ -66,12 +66,12 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void VisitNodeHandler(NodeActor.VisitMessage msg)
+        private void VisitHandler(NodeActor.VisitRequest request)
         {
 
             if (addingNodes == 0)
             {
-                root.Tell(new NodeActor.VisitMessage(Self, root));
+                root.Tell(new NodeActor.VisitRequest(Self, root, null));
                 visitingNodes = visitingNodes + 1;
             }
             else
@@ -81,7 +81,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void AddNodeCompletedHandler(NodeActor.AddCompletedMessage msg)
+        private void AddCompletedHandler(NodeActor.AddSuccess success)
         {
             addingNodes = addingNodes - 1;
 
@@ -92,7 +92,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void VisitNodeCompletedHandler(NodeActor.VisitCompletedMessage msg)
+        private void VisitSuccessdHandler(NodeActor.VisitSuccess sucsess)
         {
             visitingNodes = visitingNodes - 1;
 
