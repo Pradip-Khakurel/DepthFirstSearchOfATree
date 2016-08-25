@@ -52,11 +52,11 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         /// <summary>
         /// Message passed to a when all children of a node (and itself) has been visited
         /// </summary>
-        public class VisitSuccess
+        public class VisitResult
         {
             public VisitRequest Request { get; }
 
-            public VisitSuccess(VisitRequest request)
+            public VisitResult(VisitRequest request)
             {
                 Request = request;
             }
@@ -65,7 +65,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         /// <summary>
         /// Message passed when a new node has been created and added to the tree
         /// </summary>
-        public class AddSuccess { }
+        public class AddResult { }
         
         #endregion
 
@@ -78,22 +78,22 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             this.nodeName = nodeName;
             this.system = system;
 
-            Normal();
+            NormalBehavior();
         }
 
         #region behaviors
-        private void Normal()
+        private void NormalBehavior()
         {
-            Receive<AddRequest>(m => AddNodeHandler(m));
+            Receive<AddRequest>(m => AddRequestHandler(m));
 
-            Receive<VisitRequest>(m => VisitNodeHandler(m));
+            Receive<VisitRequest>(m => VisitRequestHandler(m));
 
-            Receive<VisitSuccess>(m => VisitNodeSucessHandler(m));
+            Receive<VisitResult>(m => VisitResultHandler(m));
         }
         #endregion behaviors
 
         #region handlers
-        public void AddNodeHandler(AddRequest request)
+        public void AddRequestHandler(AddRequest request)
         {
             if (request.ParentName == nodeName)
             {
@@ -102,7 +102,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
                 var child = system.ActorOf(Props(this.system, request.ChildName), request.ChildName);
                 children.Add(child);
 
-                request.TreeManager.Tell(new AddSuccess());
+                request.TreeManager.Tell(new AddResult());
             }
             else
             {
@@ -110,42 +110,42 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void VisitNodeHandler(VisitRequest request)
+        private void VisitRequestHandler(VisitRequest request)
         {
             Console.WriteLine($"Visiting {nodeName}", nodeName);
 
             if (children.Count == 0)
             {
-                Sender.Tell(new VisitSuccess(request));
+                Sender.Tell(new VisitResult(request));
             }
             else
             {
                 var firstChild = children.First();
-                var nodeMessage = new VisitRequest(Self, firstChild, request);
+                var thisActorRequest = new VisitRequest(Self, firstChild, request);
 
-                firstChild.Tell(nodeMessage);
+                firstChild.Tell(thisActorRequest);
             }
         }
 
-        private void VisitNodeSucessHandler(VisitSuccess sucesss)
+        private void VisitResultHandler(VisitResult result)
         {
-            var nodeMessage = sucesss.Request;
-            var visitedChild = nodeMessage.Recipient;
+            var thisActorRequest = result.Request;
+            var visitedChild = thisActorRequest.Recipient;
             var nextChildindex = children.IndexOf(visitedChild) + 1;
 
-            // get the linked list
-            var parentMsg = nodeMessage.Previous;
+            // the previous request is the request of the parent node
+            var parentRequest = thisActorRequest.Previous;
 
             if (children.Count() > nextChildindex)
             {
                 var nextChild = children[nextChildindex];
-                var newNodeMsg = new VisitRequest(Self, nextChild, parentMsg);
+                var newRequest = new VisitRequest(Self, nextChild, parentRequest);
 
-                nextChild.Tell(newNodeMsg);
+                nextChild.Tell(newRequest);
             }
             else
             {
-                parentMsg.Sender.Tell(new VisitSuccess(parentMsg));
+                parentRequest.Sender.Tell(new VisitResult(parentRequest));
             }             
         }
         #endregion

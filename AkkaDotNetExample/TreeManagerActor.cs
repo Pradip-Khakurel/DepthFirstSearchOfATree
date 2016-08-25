@@ -32,9 +32,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
             Receive<NodeActor.VisitRequest>(m => VisitHandler(m));
 
-            Receive<NodeActor.AddSuccess>(m => AddCompletedHandler(m));
+            Receive<NodeActor.AddResult>(m => AddCompletedHandler(m));
 
-            Receive<NodeActor.VisitSuccess>(m => VisitSuccessdHandler(m));
+            Receive<NodeActor.VisitResult>(m => VisitSuccessdHandler(m));
         }
 
         private void BusyBehavior()
@@ -43,9 +43,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
             Receive<NodeActor.VisitRequest>(m => Stash.Stash());
 
-            Receive<NodeActor.AddSuccess>(m => AddCompletedHandler(m));
+            Receive<NodeActor.AddResult>(m => AddCompletedHandler(m));
 
-            Receive<NodeActor.VisitSuccess>(m => VisitSuccessdHandler(m));
+            Receive<NodeActor.VisitResult>(m => VisitSuccessdHandler(m));
         }
 
         #endregion behaviors
@@ -81,7 +81,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void AddCompletedHandler(NodeActor.AddSuccess success)
+        private void AddCompletedHandler(NodeActor.AddResult success)
         {
             addingNodes = addingNodes - 1;
 
@@ -92,7 +92,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void VisitSuccessdHandler(NodeActor.VisitSuccess sucsess)
+        private void VisitSuccessdHandler(NodeActor.VisitResult sucsess)
         {
             visitingNodes = visitingNodes - 1;
 
