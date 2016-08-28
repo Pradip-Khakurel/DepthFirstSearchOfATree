@@ -10,51 +10,60 @@ using System.Threading.Tasks;
 
 namespace DepthFirstSearchOfATree.Tests
 {
-
-    public class ChildActor : ReceiveActor
-    {
-        public ChildActor()
-        {
-            ReceiveAny(o => Sender.Tell("hello!"));
-        }
-    }
-
-    public class ParentActor : ReceiveActor
-    {
-        public ParentActor()
-        {
-            var child = Context.ActorOf(Props.Create(() => new ChildActor()));
-            ReceiveAny(o => child.Forward(o));
-        }
-    }
-
-    [TestFixture]
-    public class ParentGreeterSpecs : TestKit
-    {
-        [Test]
-        public void Parent_should_create_child()
-        {
-            // verify child has been created by sending parent a message
-            // that is forwarded to child, and which child replies to sender with
-            var parentProps = Props.Create(() => new ParentActor());
-            var parent = ActorOfAsTestActorRef<ParentActor>(parentProps, TestActor);
-            parent.Tell("this should be forwarded to the child");
-            ExpectMsg("hello!");
-        }
-    }
-
     [TestFixture]
     public class AddTest : TestKit
     {
         [Test]
-        public void Node_should_receive_add_request_from_Tree()
+        public void Root_should_sent_add_result_when_receiving_add_request()
         {
-            var treeProps = Props.Create(() => new TreeActor("root"));
-            var tree = ActorOfAsTestActorRef<TreeActor>(treeProps, TestActor);
-            
-            tree.Tell(new NodeActor.AddRequest("child", "root", tree));
+            var root = Sys.ActorOf(NodeActor.Props("root"), "root");
+
+            root.Tell(new NodeActor.AddRequest("child", "root", TestActor));
 
             ExpectMsg<NodeActor.AddResult>();
+        }
+
+        [Test]
+        public void Root_should_be_a_child_of_tree()
+        {
+            var tree = Sys.ActorOf(TreeActor.Props("root"), "tree");
+            var expectedRoot = ActorSelection("/user/tree/root").Anchor;
+
+            Assert.NotNull(expectedRoot);
+        }
+
+        [Test]
+        public void Child1_should_be_a_child_of_root()
+        {
+            var root = Sys.ActorOf(NodeActor.Props("root"), "root");
+
+            root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
+
+            ExpectMsg<NodeActor.AddResult>((message, sender) =>
+            {
+                var expectedChild = ActorSelection("/user/root/child1").Anchor;
+
+                Assert.NotNull(expectedChild);
+            });
+        }
+
+        [Test]
+        public void Child1OfChild1_should_be_a_grandChild_of_root()
+        {
+            var root = Sys.ActorOf(NodeActor.Props("root"), "root");
+            root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
+
+            root.Tell(new NodeActor.AddRequest("child1OfChild1", "child1", TestActor));
+
+            ExpectMsg<NodeActor.AddResult>((message, sender) =>
+            {
+                return ActorSelection("/user/root/child1/child1OfChild1").Anchor != null;
+            });
+
+            ExpectMsg<NodeActor.AddResult>((message, sender) =>
+            {
+                return ActorSelection("/user/root/child1").Anchor != null;
+            });
         }
     }
 }

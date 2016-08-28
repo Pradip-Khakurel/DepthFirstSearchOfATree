@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace DepthFirstSearchOfATree.AkkaDotNetExample
 {
@@ -17,13 +18,13 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
             public string ParentName { get; }
 
-            public IActorRef TreeManager { get; }
+            public IActorRef Tree { get; }
 
-            public AddRequest(string childName, string parentName, IActorRef treeManager)
+            public AddRequest(string childName, string parentName, IActorRef tree)
             {
                 ChildName = childName;
                 ParentName = parentName;
-                TreeManager = treeManager;
+                Tree = tree;
             }
         }
 
@@ -103,7 +104,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
                 var child = Context.ActorOf(Props(request.ChildName), request.ChildName);
                 _children.Add(child);
 
-                request.TreeManager.Tell(new AddResult());
+                request.Tree.Tell(new AddResult());
             }
             else
             {

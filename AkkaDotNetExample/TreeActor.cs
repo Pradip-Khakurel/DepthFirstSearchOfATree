@@ -12,7 +12,6 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         public IStash Stash { get; set; }
 
         private readonly IActorRef _root;
-        private readonly ActorSystem _system;
         private int _addingNodes = 0;
         private int _visitingNodes = 0;
 
@@ -104,7 +103,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         #endregion handlers
 
-        public static Props Props(ActorSystem system, string rootNodeName)
+        public static Props Props(string rootNodeName)
         {
             return Akka.Actor.Props.Create(() => new TreeActor(rootNodeName));
         }
