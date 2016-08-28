@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DepthFirstSearchOfATree.AkkaDotNetExample
 {
-    public class TreeManagerActor : ReceiveActor, IWithUnboundedStash
+    public class TreeActor : ReceiveActor, IWithUnboundedStash
     {
         public IStash Stash { get; set; }
 
@@ -16,10 +16,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         private int _addingNodes = 0;
         private int _visitingNodes = 0;
 
-        public TreeManagerActor(ActorSystem system, string rootNodeName)
+        public TreeActor(string rootNodeName)
         {
-            _system = system;
-            _root = system.ActorOf(NodeActor.Props(system, rootNodeName), rootNodeName);
+            _root = Context.ActorOf(NodeActor.Props(rootNodeName), rootNodeName);
 
             NormalBehavior();
         }
@@ -107,7 +106,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         public static Props Props(ActorSystem system, string rootNodeName)
         {
-            return Akka.Actor.Props.Create(() => new TreeManagerActor((system), rootNodeName));
+            return Akka.Actor.Props.Create(() => new TreeActor(rootNodeName));
         }
     }
 }

@@ -10,22 +10,22 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         static void Main(string[] args)
         {
             var system = ActorSystem.Create("treeSystem");
-            var treeManager = system.ActorOf(TreeManagerActor.Props(system, "rootNode"), "treeNodeManager");
+            var tree = system.ActorOf(TreeActor.Props(system, "root"), "tree");
 
-            treeManager.Tell(new NodeActor.AddRequest("child1", "rootNode", treeManager));
-            treeManager.Tell(new NodeActor.AddRequest("child2", "rootNode", treeManager));
+            tree.Tell(new NodeActor.AddRequest("child1", "root", tree));
+            tree.Tell(new NodeActor.AddRequest("child2", "root", tree));
 
-            treeManager.Tell(new NodeActor.VisitRequest());
+            tree.Tell(new NodeActor.VisitRequest());
 
-            treeManager.Tell(new NodeActor.AddRequest("child1Ofchild1", "child1", treeManager));
-            treeManager.Tell(new NodeActor.AddRequest("child2Ofchild1", "child1", treeManager));
+            tree.Tell(new NodeActor.AddRequest("child1Ofchild1", "child1", tree));
+            tree.Tell(new NodeActor.AddRequest("child2Ofchild1", "child1", tree));
 
-            treeManager.Tell(new NodeActor.VisitRequest());
+            tree.Tell(new NodeActor.VisitRequest());
 
-            treeManager.Tell(new NodeActor.AddRequest("child1Ofchild2", "child2", treeManager));
-            treeManager.Tell(new NodeActor.AddRequest("child2Ofchild2", "child2", treeManager));
+            tree.Tell(new NodeActor.AddRequest("child1Ofchild2", "child2", tree));
+            tree.Tell(new NodeActor.AddRequest("child2Ofchild2", "child2", tree));
 
-            treeManager.Tell(new NodeActor.VisitRequest());
+            tree.Tell(new NodeActor.VisitRequest());
 
             Console.ReadKey();
         }

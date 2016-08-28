@@ -60,8 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AkkaDotNetExampleTest.cs" />
-    <Compile Include="GettingStartedTest.cs" />
+    <Compile Include="AddTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

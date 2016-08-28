@@ -75,10 +75,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         private readonly ActorSystem _system = null;
         private readonly string _nodeName = null;
 
-        public NodeActor(ActorSystem system, string nodeName)
+        public NodeActor(string nodeName)
         {
             _nodeName = nodeName;
-            _system = system;
 
             NormalBehavior();
         }
@@ -101,7 +100,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             {
                 Console.WriteLine($"Adding {request.ChildName} in node {_nodeName}");
 
-                var child = _system.ActorOf(Props(_system, request.ChildName), request.ChildName);
+                var child = Context.ActorOf(Props(request.ChildName), request.ChildName);
                 _children.Add(child);
 
                 request.TreeManager.Tell(new AddResult());
@@ -152,9 +151,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         }
         #endregion
 
-        public static Props Props(ActorSystem system, string nodeName)
+        public static Props Props(string nodeName)
         {
-            return Akka.Actor.Props.Create(() => new NodeActor(system, nodeName));
+            return Akka.Actor.Props.Create(() => new NodeActor(nodeName));
         }
     }
 }
