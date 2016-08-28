@@ -14,7 +14,7 @@ namespace DepthFirstSearchOfATree.Tests
     public class AddTest : TestKit
     {
         [Test]
-        public void Root_should_sent_add_result_when_receiving_add_request()
+        public void Root_should_sent_add_result_and_receive_add_request()
         {
             var root = Sys.ActorOf(NodeActor.Props("root"), "root");
 
