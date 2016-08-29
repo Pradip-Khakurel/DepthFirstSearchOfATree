@@ -73,7 +73,6 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         #endregion
 
         private List<IActorRef> _children { get; set; } = new List<IActorRef>();
-        private readonly ActorSystem _system = null;
         private readonly string _nodeName = null;
 
         public NodeActor(string nodeName)

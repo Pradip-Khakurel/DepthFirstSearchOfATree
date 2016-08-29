@@ -48,7 +48,7 @@ namespace DepthFirstSearchOfATree.Tests
         }
 
         [Test]
-        public void Child1OfChild1_should_be_a_grandChild_of_root()
+        public void Child1OfChild1_should_be_a_child_of_child1_and_grandChild_of_root()
         {
             var root = Sys.ActorOf(NodeActor.Props("root"), "root");
             root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
@@ -57,12 +57,33 @@ namespace DepthFirstSearchOfATree.Tests
 
             ExpectMsg<NodeActor.AddResult>((message, sender) =>
             {
-                return ActorSelection("/user/root/child1/child1OfChild1").Anchor != null;
+                return ActorSelection("/user/root/child1").Anchor != null;
             });
 
             ExpectMsg<NodeActor.AddResult>((message, sender) =>
             {
-                return ActorSelection("/user/root/child1").Anchor != null;
+                return ActorSelection("/user/root/child1/child1OfChild1").Anchor != null;
+            });
+        }
+
+
+        [Test]
+        public void Child1OfChild2_should_be_a_child_of_child2_and_grandChild_of_root()
+        {
+            var root = Sys.ActorOf(NodeActor.Props("root"), "root");
+            root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
+            root.Tell(new NodeActor.AddRequest("child2", "root", TestActor));
+
+            root.Tell(new NodeActor.AddRequest("child1OfChild2", "child2", TestActor));
+
+            ExpectMsg<NodeActor.AddResult>((message, sender) =>
+            {
+                return ActorSelection("/user/root/child2").Anchor != null;
+            });
+
+            ExpectMsg<NodeActor.AddResult>((message, sender) =>
+            {
+                return ActorSelection("/user/root/child2/child1OfChild2").Anchor != null;
             });
         }
     }
