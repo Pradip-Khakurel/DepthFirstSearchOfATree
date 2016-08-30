@@ -14,15 +14,22 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         /// </summary>
         public class AddRequest
         {
-            public string ChildName { get; }
+            public INodeActorFactory ChildFactory { get; }
 
             public string ParentName { get; }
 
             public IActorRef Tree { get; }
 
-            public AddRequest(string childName, string parentName, IActorRef tree)
+            public AddRequest(INodeActorFactory childFactory, string parentName, IActorRef tree)
             {
-                ChildName = childName;
+                ChildFactory = childFactory;
+                ParentName = parentName;
+                Tree = tree;
+            }
+
+            public AddRequest(string nodeName, string parentName, IActorRef tree) 
+                : this(new NodeActorFactory(nodeName), parentName, tree)
+            {
                 ParentName = parentName;
                 Tree = tree;
             }
@@ -68,7 +75,12 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         /// <summary>
         /// Message passed when a new node has been created and added to the tree
         /// </summary>
-        public class AddResult { }
+        public class AddResult
+        {
+            public AddResult()
+            {
+            }
+        }
         
         #endregion
 
@@ -98,9 +110,11 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         {
             if (request.ParentName == _nodeName)
             {
-                Console.WriteLine($"Adding {request.ChildName} in node {_nodeName}");
+                var childFactory = request.ChildFactory;
 
-                var child = Context.ActorOf(Props(request.ChildName), request.ChildName);
+                Console.WriteLine($"Adding {childFactory.NodeName} in node {_nodeName}");
+
+                var child = childFactory.Create(Context);
                 _children.Add(child);
 
                 request.Tree.Tell(new AddResult());
@@ -150,10 +164,5 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }             
         }
         #endregion
-
-        public static Props Props(string nodeName)
-        {
-            return Akka.Actor.Props.Create(() => new NodeActor(nodeName));
-        }
     }
 }

@@ -15,11 +15,15 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         private int _addingNodes = 0;
         private int _visitingNodes = 0;
 
-        public TreeActor(string rootNodeName)
+        public TreeActor(INodeActorFactory rootFactory)
         {
-            _root = Context.ActorOf(NodeActor.Props(rootNodeName), rootNodeName);
+            _root = rootFactory.Create(Context);
 
             NormalBehavior();
+        }
+
+        public TreeActor(string rootName) : this(new NodeActorFactory(rootName))
+        {
         }
 
         #region behaviors
@@ -103,9 +107,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         #endregion handlers
 
-        public static Props Props(string rootNodeName)
+        public static Props Props(string rootName)
         {
-            return Akka.Actor.Props.Create(() => new TreeActor(rootNodeName));
+            return Akka.Actor.Props.Create(() => new TreeActor(rootName));
         }
     }
 }

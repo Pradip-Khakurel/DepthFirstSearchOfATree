@@ -16,7 +16,7 @@ namespace DepthFirstSearchOfATree.Tests
         [Test]
         public void Root_should_sent_add_result_and_receive_add_request()
         {
-            var root = Sys.ActorOf(NodeActor.Props("root"), "root");
+            var root = new NodeActorFactory("root").Create(Sys);
 
             root.Tell(new NodeActor.AddRequest("child", "root", TestActor));
 
@@ -35,7 +35,7 @@ namespace DepthFirstSearchOfATree.Tests
         [Test]
         public void Child1_should_be_a_child_of_root()
         {
-            var root = Sys.ActorOf(NodeActor.Props("root"), "root");
+            var root = new NodeActorFactory("root").Create(Sys);
 
             root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
 
@@ -50,7 +50,7 @@ namespace DepthFirstSearchOfATree.Tests
         [Test]
         public void Child1OfChild1_should_be_a_child_of_child1_and_grandChild_of_root()
         {
-            var root = Sys.ActorOf(NodeActor.Props("root"), "root");
+            var root = new NodeActorFactory("root").Create(Sys);
             root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
 
             root.Tell(new NodeActor.AddRequest("child1OfChild1", "child1", TestActor));
@@ -70,9 +70,9 @@ namespace DepthFirstSearchOfATree.Tests
         [Test]
         public void Child1OfChild2_should_be_a_child_of_child2_and_grandChild_of_root()
         {
-            var root = Sys.ActorOf(NodeActor.Props("root"), "root");
+            var root = new NodeActorFactory("root").Create(Sys);
             root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
-            root.Tell(new NodeActor.AddRequest("child2", "root", TestActor));
+            root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
 
             root.Tell(new NodeActor.AddRequest("child1OfChild2", "child2", TestActor));
 
