@@ -36,17 +36,18 @@ namespace DepthFirstSearchOfATree.Tests
 
         #region tests_beginning_with_add_request
         [Test]
-        public void Probe_should_receive_visit_request()
+        public void Probe_should_receive_add_request()
         {
             var rootFactory = new NodeActorFactoryTest("root");
+            var child1Factory = new NodeActorFactoryTest("child1");
 
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
-            tree.Tell(new NodeActor.VisitRequest());
+            tree.Tell(new NodeActor.AddRequest(child1Factory, "root", tree));
 
             var rootProbe = rootFactory.Probe;
 
-            rootProbe.ExpectMsg<NodeActor.VisitRequest>();
+            rootProbe.ExpectMsg<NodeActor.AddRequest>();
         }
 
         [Test]
@@ -114,7 +115,7 @@ namespace DepthFirstSearchOfATree.Tests
         }
 
         [Test]
-        public void Probe_should_receive_all_requests_after_visit_request()
+        public void Probe_should_receive_all_requests_after_add_request()
         {
             var rootFactory = new NodeActorFactoryTest("root");
             var child1Factory = new NodeActorFactoryTest("child1");
