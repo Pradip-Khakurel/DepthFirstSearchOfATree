@@ -36,7 +36,7 @@ namespace DepthFirstSearchOfATree.Tests
 
         #region tests_beginning_with_add_request
         [Test]
-        public void Probe_should_receive_add_request()
+        public void Root_should_receive_add_request()
         {
             var rootFactory = new NodeActorFactoryTest("root");
             var child1Factory = new NodeActorFactoryTest("child1");
@@ -51,7 +51,7 @@ namespace DepthFirstSearchOfATree.Tests
         }
 
         [Test]
-        public void Probe_should_not_received_add_request_after_add_request()
+        public void Root_should_not_received_visit_request_after_add_request()
         {
             var rootFactory = new NodeActorFactoryTest("root");
             var child1Factory = new NodeActorFactoryTest("child1");
@@ -68,7 +68,7 @@ namespace DepthFirstSearchOfATree.Tests
         }
 
         [Test]
-        public void Probe_should_stop_receiving_any_requests_after_add_request()
+        public void Root_should_stop_receiving_any_requests_after_add_request()
         {
             var rootFactory = new NodeActorFactoryTest("root");
             var child1Factory = new NodeActorFactoryTest("child1");
@@ -92,7 +92,7 @@ namespace DepthFirstSearchOfATree.Tests
         }
 
         [Test]
-        public void Probe_should_received_add_request_after_add_request()
+        public void Root_should_received_visit_request_after_add_request()
         {
             var rootFactory = new NodeActorFactoryTest("root");
             var child1Factory = new NodeActorFactoryTest("child1");
