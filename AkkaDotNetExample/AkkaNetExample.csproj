@@ -56,7 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="INodeActorFactory.cs" />
+    <Compile Include="ICustomActorFactory.cs" />
     <Compile Include="NodeActor.cs" />
     <Compile Include="NodeActorFactory.cs" />
     <Compile Include="Program.cs" />

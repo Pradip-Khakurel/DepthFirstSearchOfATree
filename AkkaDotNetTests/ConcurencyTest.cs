@@ -11,35 +11,15 @@ using NUnit.Framework;
 
 namespace DepthFirstSearchOfATree.Tests
 {
-
-    public class NodeActorFactoryTest : TestKit, INodeActorFactory
-    {
-        public string NodeName { get; }
-
-        public TestProbe Probe { get; }
-
-        public NodeActorFactoryTest(string nodeName)
-        {
-            NodeName = nodeName;
-            Probe = CreateTestProbe(nodeName);
-        }
-
-        public IActorRef Create(IActorRefFactory refFactory)
-        {
-            return Probe;
-        }
-    }
-
     [TestFixture]
     public class ConcurencyTest : TestKit
     {
-
         #region tests_beginning_with_add_request
         [Test]
         public void Root_should_receive_add_request()
         {
-            var rootFactory = new NodeActorFactoryTest("root");
-            var child1Factory = new NodeActorFactoryTest("child1");
+            var rootFactory = new TestProbeFactory("root");
+            var child1Factory = new TestProbeFactory("child1");
 
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
@@ -53,8 +33,8 @@ namespace DepthFirstSearchOfATree.Tests
         [Test]
         public void Root_should_not_received_visit_request_after_add_request()
         {
-            var rootFactory = new NodeActorFactoryTest("root");
-            var child1Factory = new NodeActorFactoryTest("child1");
+            var rootFactory = new TestProbeFactory("root");
+            var child1Factory = new TestProbeFactory("child1");
 
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
@@ -70,11 +50,11 @@ namespace DepthFirstSearchOfATree.Tests
         [Test]
         public void Root_should_stop_receiving_any_requests_after_add_request()
         {
-            var rootFactory = new NodeActorFactoryTest("root");
-            var child1Factory = new NodeActorFactoryTest("child1");
-            var child2Factory = new NodeActorFactoryTest("child2");
-            var child3Factory = new NodeActorFactoryTest("child3");
-            var child4Factory = new NodeActorFactoryTest("child4");
+            var rootFactory = new TestProbeFactory("root");
+            var child1Factory = new TestProbeFactory("child1");
+            var child2Factory = new TestProbeFactory("child2");
+            var child3Factory = new TestProbeFactory("child3");
+            var child4Factory = new TestProbeFactory("child4");
 
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
@@ -94,9 +74,9 @@ namespace DepthFirstSearchOfATree.Tests
         [Test]
         public void Root_should_received_visit_request_after_add_request()
         {
-            var rootFactory = new NodeActorFactoryTest("root");
-            var child1Factory = new NodeActorFactoryTest("child1");
-            var child2Factory = new NodeActorFactoryTest("child2");
+            var rootFactory = new TestProbeFactory("root");
+            var child1Factory = new TestProbeFactory("child1");
+            var child2Factory = new TestProbeFactory("child2");
 
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
@@ -115,12 +95,12 @@ namespace DepthFirstSearchOfATree.Tests
         }
 
         [Test]
-        public void Probe_should_receive_all_requests_after_add_request()
+        public void Root_should_receive_all_requests_after_add_request()
         {
-            var rootFactory = new NodeActorFactoryTest("root");
-            var child1Factory = new NodeActorFactoryTest("child1");
-            var child2Factory = new NodeActorFactoryTest("child2");
-            var child3Factory = new NodeActorFactoryTest("child3");
+            var rootFactory = new TestProbeFactory("root");
+            var child1Factory = new TestProbeFactory("child1");
+            var child2Factory = new TestProbeFactory("child2");
+            var child3Factory = new TestProbeFactory("child3");
 
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
@@ -142,6 +122,113 @@ namespace DepthFirstSearchOfATree.Tests
                     rootProbe.ExpectMsg<NodeActor.AddRequest>();
                     rootProbe.ExpectMsg<NodeActor.AddRequest>();
                 });
+            });
+        }
+        #endregion tests_beginning_with_add_request
+
+        #region tests_beginning_with_visit_request
+        [Test]
+        public void Root_should_receive_visit_request()
+        {
+            var rootFactory = new TestProbeFactory("root");
+            var child1Factory = new TestProbeFactory("child1");
+
+            var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
+
+            tree.Tell(new NodeActor.VisitRequest());
+
+            var rootProbe = rootFactory.Probe;
+
+            rootProbe.ExpectMsg<NodeActor.VisitRequest>();
+        }
+
+        [Test]
+        public void Root_should_not_received_add_request_after_visit_request()
+        {
+            var rootFactory = new TestProbeFactory("root");
+            var child1Factory = new TestProbeFactory("child1");
+
+            var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
+
+            tree.Tell(new NodeActor.VisitRequest());
+            tree.Tell(new NodeActor.AddRequest(child1Factory, "root", tree));
+
+            var rootProbe = rootFactory.Probe;
+
+            rootProbe.ExpectMsg<NodeActor.VisitRequest>();
+            rootProbe.ExpectNoMsg();
+        }
+
+        [Test]
+        public void Root_should_stop_receiving_any_requests_after_visit_request()
+        {
+            var rootFactory = new TestProbeFactory("root");
+            var child1Factory = new TestProbeFactory("child1");
+            var child2Factory = new TestProbeFactory("child2");
+            var child3Factory = new TestProbeFactory("child3");
+            var child4Factory = new TestProbeFactory("child4");
+
+            var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
+
+            tree.Tell(new NodeActor.VisitRequest());
+            tree.Tell(new NodeActor.AddRequest(child1Factory, "root", tree));
+            tree.Tell(new NodeActor.AddRequest(child2Factory, "root", tree));
+            tree.Tell(new NodeActor.AddRequest(child3Factory, "root", tree));
+            tree.Tell(new NodeActor.VisitRequest());
+            tree.Tell(new NodeActor.AddRequest(child4Factory, "root", tree));
+
+            var rootProbe = rootFactory.Probe;
+
+            rootProbe.ExpectMsg<NodeActor.VisitRequest>();
+            rootProbe.ExpectNoMsg();
+        }
+
+        [Test]
+        public void Root_should_received_add_request_after_visit_request()
+        {
+            var rootFactory = new TestProbeFactory("root");
+            var child1Factory = new TestProbeFactory("child1");
+            var child2Factory = new TestProbeFactory("child2");
+
+            var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
+
+            tree.Tell(new NodeActor.VisitRequest());
+            tree.Tell(new NodeActor.AddRequest(rootFactory, "root", tree));
+
+            var rootProbe = rootFactory.Probe;
+
+            rootProbe.ExpectMsg<NodeActor.VisitRequest>(m =>
+            {
+                tree.Tell(new NodeActor.VisitResult(m));
+
+                rootProbe.ExpectMsg<NodeActor.AddRequest>();
+            });
+        }
+
+        [Test]
+        public void Root_should_receive_all_requests_after_visit_request()
+        {
+            var rootFactory = new TestProbeFactory("root");
+            var child1Factory = new TestProbeFactory("child1");
+            var child2Factory = new TestProbeFactory("child2");
+            var child3Factory = new TestProbeFactory("child3");
+
+            var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
+
+            tree.Tell(new NodeActor.VisitRequest());
+            tree.Tell(new NodeActor.AddRequest(child1Factory, "root", tree));
+            tree.Tell(new NodeActor.AddRequest(child2Factory, "root", tree));
+            tree.Tell(new NodeActor.AddRequest(child3Factory, "root", tree));
+
+            var rootProbe = rootFactory.Probe;
+
+            rootProbe.ExpectMsg<NodeActor.VisitRequest>(m1 =>
+            {
+                tree.Tell(new NodeActor.VisitResult(m1));
+
+                rootProbe.ExpectMsg<NodeActor.AddRequest>();
+                rootProbe.ExpectMsg<NodeActor.AddRequest>();
+                rootProbe.ExpectMsg<NodeActor.AddRequest>();
             });
         }
         #endregion tests_beginning_with_add_request

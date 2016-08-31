@@ -14,13 +14,13 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         /// </summary>
         public class AddRequest
         {
-            public INodeActorFactory ChildFactory { get; }
+            public ICustomActorFactory ChildFactory { get; }
 
             public string ParentName { get; }
 
             public IActorRef Tree { get; }
 
-            public AddRequest(INodeActorFactory childFactory, string parentName, IActorRef tree)
+            public AddRequest(ICustomActorFactory childFactory, string parentName, IActorRef tree)
             {
                 ChildFactory = childFactory;
                 ParentName = parentName;
@@ -112,7 +112,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             {
                 var childFactory = request.ChildFactory;
 
-                Console.WriteLine($"Adding {childFactory.NodeName} in node {_nodeName}");
+                Console.WriteLine($"Adding {childFactory.ActorName} in node {_nodeName}");
 
                 var child = childFactory.Create(Context);
                 _children.Add(child);

@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace DepthFirstSearchOfATree.AkkaDotNetExample
 {
-    public class NodeActorFactory : INodeActorFactory
+    public class NodeActorFactory : ICustomActorFactory
     {
-        public string NodeName { get; }
+        public string ActorName { get; }
 
         public NodeActorFactory(string nodeName)
         {
-            NodeName = nodeName;
+            ActorName = nodeName;
         }
 
         public IActorRef Create(IActorRefFactory refFactory)
         {
-            return refFactory.ActorOf(Props.Create(() => new NodeActor(NodeName)));
+            return refFactory.ActorOf(Props.Create(() => new NodeActor(ActorName)));
         }
     }
 }

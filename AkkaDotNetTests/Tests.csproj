@@ -61,7 +61,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddTest.cs" />
+    <Compile Include="BlackholeFactory.cs" />
     <Compile Include="ConcurencyTest.cs" />
+    <Compile Include="TestNodeActorFactory.cs" />
+    <Compile Include="TestProbeFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

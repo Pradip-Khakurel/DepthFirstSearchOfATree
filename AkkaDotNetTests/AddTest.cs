@@ -16,7 +16,7 @@ namespace DepthFirstSearchOfATree.Tests
         [Test]
         public void Root_should_sent_add_result_and_receive_add_request()
         {
-            var root = new NodeActorFactory("root").Create(Sys);
+            var root = new TestNodeActorFactory("root").ActorRef;
 
             root.Tell(new NodeActor.AddRequest("child", "root", TestActor));
 
@@ -24,67 +24,85 @@ namespace DepthFirstSearchOfATree.Tests
         }
 
         [Test]
-        public void Root_should_be_a_child_of_tree()
+        public void Root_should_sent_add_result_to_tree()
         {
-            var tree = Sys.ActorOf(TreeActor.Props("root"), "tree");
-            var expectedRoot = ActorSelection("/user/tree/root").Anchor;
-
-            Assert.NotNull(expectedRoot);
-        }
-
-        [Test]
-        public void Child1_should_be_a_child_of_root()
-        {
-            var root = new NodeActorFactory("root").Create(Sys);
+            var root = new TestNodeActorFactory("root").ActorRef;
 
             root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
 
-            ExpectMsg<NodeActor.AddResult>((message, sender) =>
+            ExpectMsg<NodeActor.AddResult>((m, s) =>
             {
-                var expectedChild = ActorSelection("/user/root/child1").Anchor;
-
-                Assert.NotNull(expectedChild);
+                var test = s == root;
+                return test;
             });
         }
 
         [Test]
-        public void Child1OfChild1_should_be_a_child_of_child1_and_grandChild_of_root()
+        public void Child1_should_receive_add_request_from_root()
         {
             var root = new NodeActorFactory("root").Create(Sys);
-            root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
+            var child1Factory = new TestProbeFactory("child1");
 
+            root.Tell(new NodeActor.AddRequest(child1Factory, "root", TestActor));
             root.Tell(new NodeActor.AddRequest("child1OfChild1", "child1", TestActor));
 
-            ExpectMsg<NodeActor.AddResult>((message, sender) =>
-            {
-                return ActorSelection("/user/root/child1").Anchor != null;
-            });
+            var childProbe = child1Factory.Probe;
 
-            ExpectMsg<NodeActor.AddResult>((message, sender) =>
+            childProbe.ExpectMsg<NodeActor.AddRequest>((m, s) =>
             {
-                return ActorSelection("/user/root/child1/child1OfChild1").Anchor != null;
+                var test = s == root && m.ChildFactory.ActorName == "child1OfChild1";
+                return test;
             });
         }
 
+        [Test]
+        public void Child1_should_sent_add_result_to_tree()
+        {
+            var root = new TestNodeActorFactory("root").ActorRef;
+            var child1Factory = new TestNodeActorFactory("child1");
+
+            root.Tell(new NodeActor.AddRequest(child1Factory, "root", TestActor));
+            root.Tell(new NodeActor.AddRequest("child1OfChild1", "child1", TestActor));
+
+            ExpectMsg<NodeActor.AddResult>((m, s) => s == root);
+            ExpectMsg<NodeActor.AddResult>((m, s) => s == child1Factory.ActorRef);
+        }
 
         [Test]
-        public void Child1OfChild2_should_be_a_child_of_child2_and_grandChild_of_root()
+        public void Child1OfChild1_should_receive_add_request()
         {
-            var root = new NodeActorFactory("root").Create(Sys);
-            root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
-            root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
+            var root = new TestNodeActorFactory("root").ActorRef;
+            var child1 = new TestNodeActorFactory("child1").ActorRef;
+            var child1OfChild1Factory = new TestProbeFactory("child1OfChild1");
 
+            root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
+            root.Tell(new NodeActor.AddRequest("child2", "root", TestActor));
+            root.Tell(new NodeActor.AddRequest(child1OfChild1Factory, "child1", TestActor));
             root.Tell(new NodeActor.AddRequest("child1OfChild2", "child2", TestActor));
+            root.Tell(new NodeActor.AddRequest("childOf...", "child1OfChild1", TestActor));
 
-            ExpectMsg<NodeActor.AddResult>((message, sender) =>
-            {
-                return ActorSelection("/user/root/child2").Anchor != null;
-            });
+            var child1OfChild1Probe = child1OfChild1Factory.Probe;
 
-            ExpectMsg<NodeActor.AddResult>((message, sender) =>
-            {
-                return ActorSelection("/user/root/child2/child1OfChild2").Anchor != null;
-            });
+            child1OfChild1Probe.ExpectMsg<NodeActor.AddRequest>();
+        }
+
+        [Test]
+        public void Child1OfChild1_should_sent_add_result_to_tree()
+        {
+            var root = new TestNodeActorFactory("root").ActorRef;
+            var child1factory = new TestNodeActorFactory("child1");
+            var child2factory = new TestNodeActorFactory("child2");
+            var child1OfChild1Factory = new TestNodeActorFactory("child1OfChild1");
+
+            root.Tell(new NodeActor.AddRequest(child1factory, "root", TestActor));
+            root.Tell(new NodeActor.AddRequest(child2factory, "root", TestActor));
+            root.Tell(new NodeActor.AddRequest(child1OfChild1Factory, "child1", TestActor));
+            root.Tell(new NodeActor.AddRequest("childOf...", "child1OfChild1", TestActor));
+
+            ExpectMsg<NodeActor.AddResult>((m, s) => s == root);
+            ExpectMsg<NodeActor.AddResult>((m, s) => s == root);
+            ExpectMsg<NodeActor.AddResult>((m, s) => s == child1factory.ActorRef);
+            ExpectMsg<NodeActor.AddResult>((m, s) => s == child1OfChild1Factory.ActorRef);
         }
     }
 }

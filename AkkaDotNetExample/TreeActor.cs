@@ -15,7 +15,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         private int _addingNodes = 0;
         private int _visitingNodes = 0;
 
-        public TreeActor(INodeActorFactory rootFactory)
+        public TreeActor(ICustomActorFactory rootFactory)
         {
             _root = rootFactory.Create(Context);
 

@@ -2,9 +2,9 @@
 
 namespace DepthFirstSearchOfATree.AkkaDotNetExample
 {
-    public interface INodeActorFactory
+    public interface ICustomActorFactory
     {
-        string NodeName { get; }
+        string ActorName { get; }
 
         IActorRef Create(IActorRefFactory refFactory);
     }
