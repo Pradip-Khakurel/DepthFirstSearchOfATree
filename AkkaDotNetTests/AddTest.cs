@@ -62,9 +62,9 @@ namespace DepthFirstSearchOfATree.Tests
             var child1Factory = new TestNodeActorFactory("child1");
 
             root.Tell(new NodeActor.AddRequest(child1Factory, "root", TestActor));
-            root.Tell(new NodeActor.AddRequest("child1OfChild1", "child1", TestActor));
-
             ExpectMsg<NodeActor.AddResult>((m, s) => s == root);
+
+            root.Tell(new NodeActor.AddRequest("child1OfChild1", "child1", TestActor));
             ExpectMsg<NodeActor.AddResult>((m, s) => s == child1Factory.ActorRef);
         }
 
@@ -73,16 +73,15 @@ namespace DepthFirstSearchOfATree.Tests
         {
             var root = new TestNodeActorFactory("root").ActorRef;
             var child1 = new TestNodeActorFactory("child1").ActorRef;
+            var child2Factory = new BlackHoleActorFactory("child2");
             var child1OfChild1Factory = new TestProbeFactory("child1OfChild1");
 
             root.Tell(new NodeActor.AddRequest("child1", "root", TestActor));
-            root.Tell(new NodeActor.AddRequest("child2", "root", TestActor));
+            root.Tell(new NodeActor.AddRequest(child2Factory, "root", TestActor));
             root.Tell(new NodeActor.AddRequest(child1OfChild1Factory, "child1", TestActor));
-            root.Tell(new NodeActor.AddRequest("child1OfChild2", "child2", TestActor));
             root.Tell(new NodeActor.AddRequest("childOf...", "child1OfChild1", TestActor));
 
             var child1OfChild1Probe = child1OfChild1Factory.Probe;
-
             child1OfChild1Probe.ExpectMsg<NodeActor.AddRequest>();
         }
 
@@ -91,17 +90,19 @@ namespace DepthFirstSearchOfATree.Tests
         {
             var root = new TestNodeActorFactory("root").ActorRef;
             var child1factory = new TestNodeActorFactory("child1");
-            var child2factory = new TestNodeActorFactory("child2");
+            var child2factory = new BlackHoleActorFactory("child2");
             var child1OfChild1Factory = new TestNodeActorFactory("child1OfChild1");
 
             root.Tell(new NodeActor.AddRequest(child1factory, "root", TestActor));
-            root.Tell(new NodeActor.AddRequest(child2factory, "root", TestActor));
-            root.Tell(new NodeActor.AddRequest(child1OfChild1Factory, "child1", TestActor));
-            root.Tell(new NodeActor.AddRequest("childOf...", "child1OfChild1", TestActor));
+            ExpectMsg<NodeActor.AddResult>((m, s) => s == root);
 
+            root.Tell(new NodeActor.AddRequest(child2factory, "root", TestActor));
             ExpectMsg<NodeActor.AddResult>((m, s) => s == root);
-            ExpectMsg<NodeActor.AddResult>((m, s) => s == root);
+
+            root.Tell(new NodeActor.AddRequest(child1OfChild1Factory, "child1", TestActor));
             ExpectMsg<NodeActor.AddResult>((m, s) => s == child1factory.ActorRef);
+
+            root.Tell(new NodeActor.AddRequest("childOf...", "child1OfChild1", TestActor));
             ExpectMsg<NodeActor.AddResult>((m, s) => s == child1OfChild1Factory.ActorRef);
         }
     }
