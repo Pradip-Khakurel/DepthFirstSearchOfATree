@@ -10,7 +10,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
     {
         #region messages
         /// <summary>
-        /// Message passed to add a Node
+        /// Message sent to add a Node
         /// </summary>
         public class AddRequest
         {
@@ -36,7 +36,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         }
 
         /// <summary>
-        /// Message passed to visit a child node
+        /// Message sent to visit the tree (when sent to the tree) or a node of the tree (when sent to a node)
         /// </summary>
         public class VisitRequest
         {   
@@ -60,7 +60,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         }
 
         /// <summary>
-        /// Message passed to a when all children of a node (and itself) has been visited
+        ///  Message sent after all children of a node (and itself) has been visited
         /// </summary>
         public class VisitResult
         {
@@ -73,7 +73,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         }
 
         /// <summary>
-        /// Message passed when a new node has been created and added to the tree
+        /// Message sent when a new node has been created and added to the tree
         /// </summary>
         public class AddResult
         {

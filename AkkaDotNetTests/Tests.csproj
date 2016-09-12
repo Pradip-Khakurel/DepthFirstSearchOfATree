@@ -66,6 +66,7 @@
     <Compile Include="TestNodeActorFactory.cs" />
     <Compile Include="TestProbeFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VisitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

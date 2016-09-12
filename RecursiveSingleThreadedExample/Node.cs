@@ -6,23 +6,23 @@ using System.Threading.Tasks;
 
 namespace DepthFirstSearchOfATree.RecursiveSingleThreadedExample
 {
-    public class TreeNode
+    public class Node
     { 
-        private List<TreeNode> _children = new List<TreeNode>();
+        private List<Node> _children = new List<Node>();
 
-        public IEnumerable<TreeNode> Children
+        public IEnumerable<Node> Children
         {
             get { return _children; }
         }
 
         public string NodeName { get; }
 
-        public TreeNode(string nodeName)
+        public Node(string nodeName)
         {
             NodeName = nodeName;
         }
 
-        public void AddNode(TreeNode node)
+        public void AddNode(Node node)
         {
             Console.WriteLine($"Adding {node.NodeName} in node {NodeName}");
 

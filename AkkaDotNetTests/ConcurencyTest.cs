@@ -76,12 +76,11 @@ namespace DepthFirstSearchOfATree.Tests
         {
             var rootFactory = new TestProbeFactory("root");
             var child1Factory = new TestProbeFactory("child1");
-            var child2Factory = new TestProbeFactory("child2");
 
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
  
-            tree.Tell(new NodeActor.AddRequest(rootFactory, "root", tree));
+            tree.Tell(new NodeActor.AddRequest(child1Factory, "root", tree));
             tree.Tell(new NodeActor.VisitRequest());
 
             var rootProbe = rootFactory.Probe;
@@ -188,12 +187,11 @@ namespace DepthFirstSearchOfATree.Tests
         {
             var rootFactory = new TestProbeFactory("root");
             var child1Factory = new TestProbeFactory("child1");
-            var child2Factory = new TestProbeFactory("child2");
 
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
             tree.Tell(new NodeActor.VisitRequest());
-            tree.Tell(new NodeActor.AddRequest(rootFactory, "root", tree));
+            tree.Tell(new NodeActor.AddRequest(child1Factory, "root", tree));
 
             var rootProbe = rootFactory.Probe;
 

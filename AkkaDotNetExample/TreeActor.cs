@@ -14,10 +14,12 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         private readonly IActorRef _root;
         private int _addingNodes = 0;
         private int _visitingNodes = 0;
+        private HashSet<string> _exisitingNodes = new HashSet<string>();
 
         public TreeActor(ICustomActorFactory rootFactory)
         {
             _root = rootFactory.Create(Context);
+            _exisitingNodes.Add(rootFactory.ActorName);
 
             NormalBehavior();
         }
@@ -56,8 +58,18 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         private void AddRequestHandler(NodeActor.AddRequest request)
         {
+            if(_exisitingNodes.Contains(request.ParentName) == false)
+            {
+                throw new Exception($"Node {request.ParentName} does not exist");
+            }
+            else if(_exisitingNodes.Contains(request.ChildFactory.ActorName) == true)
+            {
+                throw new Exception($"Node {request.ChildFactory.ActorName} already exists!");
+            }
+
             if(_visitingNodes == 0)
             {
+                _exisitingNodes.Add(request.ChildFactory.ActorName);
                 _root.Tell(request);
                 _addingNodes = _addingNodes + 1;
             }
