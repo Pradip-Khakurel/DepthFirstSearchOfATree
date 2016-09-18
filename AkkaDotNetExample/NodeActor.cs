@@ -27,7 +27,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
                 Tree = tree;
             }
 
-            public AddRequest(string nodeName, string parentName, IActorRef tree) 
+            public AddRequest(string nodeName, string parentName, IActorRef tree)
                 : this(new NodeActorFactory(nodeName), parentName, tree)
             {
                 ParentName = parentName;
@@ -45,12 +45,12 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             public IActorRef Recipient { get; }
 
             public VisitRequest Previous { get;  }
-
             public VisitRequest()
             {
                 Previous = null;
+                Sender = null;
+                Recipient = null;
             }
-
             public VisitRequest(IActorRef sender, IActorRef recipient, VisitRequest previous)
             {
                 Previous = previous;

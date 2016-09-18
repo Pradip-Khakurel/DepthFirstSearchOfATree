@@ -58,16 +58,9 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         private void AddRequestHandler(NodeActor.AddRequest request)
         {
-            if(_exisitingNodes.Contains(request.ParentName) == false)
-            {
-                throw new Exception($"Node {request.ParentName} does not exist");
-            }
-            else if(_exisitingNodes.Contains(request.ChildFactory.ActorName) == true)
-            {
-                throw new Exception($"Node {request.ChildFactory.ActorName} already exists!");
-            }
+            CheckAddRequest(request);
 
-            if(_visitingNodes == 0)
+            if (_visitingNodes == 0)
             {
                 _exisitingNodes.Add(request.ChildFactory.ActorName);
                 _root.Tell(request);
@@ -119,9 +112,20 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         #endregion handlers
 
-        public static Props Props(string rootName)
+        #region helpers
+
+        private void CheckAddRequest(NodeActor.AddRequest request)
         {
-            return Akka.Actor.Props.Create(() => new TreeActor(rootName));
+            if (_exisitingNodes.Contains(request.ParentName) == false)
+            {
+                throw new Exception($"Node {request.ParentName} does not exist");
+            }
+            else if (_exisitingNodes.Contains(request.ChildFactory.ActorName) == true)
+            {
+                throw new Exception($"Node {request.ChildFactory.ActorName} already exists!");
+            }
         }
-    }
+
+        #endregion helpers
+    } // end of TreeActorClass
 }

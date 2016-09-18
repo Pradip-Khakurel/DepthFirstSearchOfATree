@@ -9,18 +9,16 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Create a tree and visit it using Depth first search (Akka.Net version)");
+
             var system = ActorSystem.Create("treeSystem");
-            var tree = system.ActorOf(TreeActor.Props("root"), "tree");
+            var tree = system.ActorOf(Props.Create(() => new TreeActor("root")), "tree");
 
             tree.Tell(new NodeActor.AddRequest("child1", "root", tree));
             tree.Tell(new NodeActor.AddRequest("child2", "root", tree));
 
-            tree.Tell(new NodeActor.VisitRequest());
-
             tree.Tell(new NodeActor.AddRequest("child1Ofchild1", "child1", tree));
             tree.Tell(new NodeActor.AddRequest("child2Ofchild1", "child1", tree));
-
-            tree.Tell(new NodeActor.VisitRequest());
 
             tree.Tell(new NodeActor.AddRequest("child1Ofchild2", "child2", tree));
             tree.Tell(new NodeActor.AddRequest("child2Ofchild2", "child2", tree));

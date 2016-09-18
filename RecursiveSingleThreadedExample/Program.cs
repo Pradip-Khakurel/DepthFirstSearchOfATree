@@ -10,7 +10,7 @@ namespace DepthFirstSearchOfATree.RecursiveSingleThreadedExample
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Depth first search using a recursive algorithm with a single thread");
+            Console.WriteLine("Create a tree and visit it using Depth first search (recursive algorithm single threaded version)");
 
             var root = new Node("root");
 
@@ -34,7 +34,6 @@ namespace DepthFirstSearchOfATree.RecursiveSingleThreadedExample
 
             DepthFirstSearch(root);
 
-            Console.ReadKey();
             Console.ReadKey();
         }
 
