@@ -32,33 +32,33 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         public void NormalBehavior()
         {
-            Receive<NodeActor.AddRequest>(m => AddRequestHandler(m));
+            Receive<AddRequest>(m => AddRequestHandler(m));
 
-            Receive<NodeActor.VisitRequest>(m => VisitRequestHandler(m));
+            Receive<VisitRequest>(m => VisitRequestHandler(m));
 
-            Receive<NodeActor.AddResult>(m => AddResultHandler(m));
+            Receive<AddResult>(m => AddResultHandler(m));
 
-            Receive<NodeActor.VisitResult>(m => VisitResultHandler(m));
+            Receive<VisitResult>(m => VisitResultHandler(m));
         }
 
         private void BusyBehavior()
         {
-            Receive<NodeActor.AddRequest>(m => Stash.Stash());
+            Receive<AddRequest>(m => Stash.Stash());
 
-            Receive<NodeActor.VisitRequest>(m => Stash.Stash());
+            Receive<VisitRequest>(m => Stash.Stash());
 
-            Receive<NodeActor.AddResult>(m => AddResultHandler(m));
+            Receive<AddResult>(m => AddResultHandler(m));
 
-            Receive<NodeActor.VisitResult>(m => VisitResultHandler(m));
+            Receive<VisitResult>(m => VisitResultHandler(m));
         }
 
         #endregion behaviors
 
         #region handlers
 
-        private void AddRequestHandler(NodeActor.AddRequest request)
+        private void AddRequestHandler(AddRequest request)
         {
-            CheckAddRequest(request);
+            CheckAddRequestConsistency(request);
 
             if (_visitingNodes == 0)
             {
@@ -73,12 +73,12 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void VisitRequestHandler(NodeActor.VisitRequest request)
+        private void VisitRequestHandler(VisitRequest request)
         {
 
             if (_addingNodes == 0)
             {
-                _root.Tell(new NodeActor.VisitRequest(Self, _root, null));
+                _root.Tell(new VisitRequest(Self, _root, null));
                 _visitingNodes = _visitingNodes + 1;
             }
             else
@@ -88,7 +88,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void AddResultHandler(NodeActor.AddResult result)
+        private void AddResultHandler(AddResult result)
         {
             _addingNodes = _addingNodes - 1;
 
@@ -99,7 +99,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
             }
         }
 
-        private void VisitResultHandler(NodeActor.VisitResult result)
+        private void VisitResultHandler(VisitResult result)
         {
             _visitingNodes = _visitingNodes - 1;
 
@@ -114,7 +114,7 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
 
         #region helpers
 
-        private void CheckAddRequest(NodeActor.AddRequest request)
+        private void CheckAddRequestConsistency(AddRequest request)
         {
             if (_exisitingNodes.Contains(request.ParentName) == false)
             {

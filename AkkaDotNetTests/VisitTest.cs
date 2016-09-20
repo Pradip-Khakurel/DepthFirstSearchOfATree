@@ -20,10 +20,10 @@ namespace DepthFirstSearchOfATree.Tests
             var rootFactory = new TestProbeFactory("root");
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
-            tree.Tell(new NodeActor.VisitRequest());
+            tree.Tell(new VisitRequest());
 
             var root = rootFactory.Probe;
-            root.ExpectMsg<NodeActor.VisitRequest>();
+            root.ExpectMsg<VisitRequest>();
         }
 
         [Test]
@@ -31,9 +31,9 @@ namespace DepthFirstSearchOfATree.Tests
         {
             var root = new NodeActorFactory("root").Create(Sys);
 
-            root.Tell(new NodeActor.VisitRequest());
+            root.Tell(new VisitRequest());
 
-            ExpectMsg<NodeActor.VisitResult>();
+            ExpectMsg<VisitResult>();
         }
 
         [Test]
@@ -42,10 +42,10 @@ namespace DepthFirstSearchOfATree.Tests
             var root = new NodeActorFactory("root").Create(Sys);
             var child1Factory = new TestProbeFactory("child1");
 
-            root.Tell(new NodeActor.AddRequest(child1Factory, "root", TestActor));
-            root.Tell(new NodeActor.VisitRequest());
+            root.Tell(new AddRequest(child1Factory, "root", TestActor));
+            root.Tell(new VisitRequest());
 
-            child1Factory.Probe.ExpectMsg<NodeActor.VisitRequest>();
+            child1Factory.Probe.ExpectMsg<VisitRequest>();
         }
 
         [Test]
@@ -61,30 +61,30 @@ namespace DepthFirstSearchOfATree.Tests
             var child2 = child2Factory.Probe;
             var child3 = child3Factory.Probe;
 
-            root.Tell(new NodeActor.AddRequest(child1Factory, "root", TestActor));
-            ExpectMsg<NodeActor.AddResult>();
+            root.Tell(new AddRequest(child1Factory, "root", TestActor));
+            ExpectMsg<AddResult>();
 
-            root.Tell(new NodeActor.AddRequest(child2Factory, "root", TestActor));
-            ExpectMsg<NodeActor.AddResult>();
+            root.Tell(new AddRequest(child2Factory, "root", TestActor));
+            ExpectMsg<AddResult>();
 
-            root.Tell(new NodeActor.AddRequest(child3Factory, "root", TestActor));
-            ExpectMsg<NodeActor.AddResult>();
+            root.Tell(new AddRequest(child3Factory, "root", TestActor));
+            ExpectMsg<AddResult>();
 
-            root.Tell(new NodeActor.VisitRequest(TestActor, root, null));
+            root.Tell(new VisitRequest(TestActor, root, null));
 
-            child1.ExpectMsg<NodeActor.VisitRequest>((m, s) =>
+            child1.ExpectMsg<VisitRequest>((m, s) =>
             {
-                s.Tell(new NodeActor.VisitResult(m));
+                s.Tell(new VisitResult(m));
             });
 
-            child2.ExpectMsg<NodeActor.VisitRequest>((m, s) =>
+            child2.ExpectMsg<VisitRequest>((m, s) =>
             {
-                s.Tell(new NodeActor.VisitResult(m));
+                s.Tell(new VisitResult(m));
             });
 
-            child3.ExpectMsg<NodeActor.VisitRequest>((m, s) =>
+            child3.ExpectMsg<VisitRequest>((m, s) =>
             {
-                s.Tell(new NodeActor.VisitResult(m));
+                s.Tell(new VisitResult(m));
             });
         }
 
@@ -100,20 +100,20 @@ namespace DepthFirstSearchOfATree.Tests
             var child1 = child1Factory.Probe;
             var child3 = child3Factory.Probe;
 
-            root.Tell(new NodeActor.AddRequest(child1Factory, "root", TestActor));
-            ExpectMsg<NodeActor.AddResult>();
+            root.Tell(new AddRequest(child1Factory, "root", TestActor));
+            ExpectMsg<AddResult>();
 
-            root.Tell(new NodeActor.AddRequest(child2Factory, "root", TestActor));
-            ExpectMsg<NodeActor.AddResult>();
+            root.Tell(new AddRequest(child2Factory, "root", TestActor));
+            ExpectMsg<AddResult>();
 
-            root.Tell(new NodeActor.AddRequest(child3Factory, "root", TestActor));
-            ExpectMsg<NodeActor.AddResult>();
+            root.Tell(new AddRequest(child3Factory, "root", TestActor));
+            ExpectMsg<AddResult>();
 
-            root.Tell(new NodeActor.VisitRequest(TestActor, root, null));
+            root.Tell(new VisitRequest(TestActor, root, null));
 
-            child1.ExpectMsg<NodeActor.VisitRequest>((m, s) =>
+            child1.ExpectMsg<VisitRequest>((m, s) =>
             {
-                s.Tell(new NodeActor.VisitResult(m));
+                s.Tell(new VisitResult(m));
             });
 
             child3.ExpectNoMsg();
@@ -131,16 +131,16 @@ namespace DepthFirstSearchOfATree.Tests
             var child2 = child2Factory.Probe;
             var child3 = child3Factory.Probe;
 
-            root.Tell(new NodeActor.AddRequest(child1Factory, "root", TestActor));
-            ExpectMsg<NodeActor.AddResult>();
+            root.Tell(new AddRequest(child1Factory, "root", TestActor));
+            ExpectMsg<AddResult>();
 
-            root.Tell(new NodeActor.AddRequest(child2Factory, "root", TestActor));
-            ExpectMsg<NodeActor.AddResult>();
+            root.Tell(new AddRequest(child2Factory, "root", TestActor));
+            ExpectMsg<AddResult>();
 
-            root.Tell(new NodeActor.AddRequest(child3Factory, "root", TestActor));
-            ExpectMsg<NodeActor.AddResult>();
+            root.Tell(new AddRequest(child3Factory, "root", TestActor));
+            ExpectMsg<AddResult>();
 
-            root.Tell(new NodeActor.VisitRequest(TestActor, root, null));
+            root.Tell(new VisitRequest(TestActor, root, null));
 
             child2.ExpectNoMsg();
             child3.ExpectNoMsg();

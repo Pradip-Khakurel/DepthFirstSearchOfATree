@@ -56,17 +56,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ICustomActorFactory.cs" />
-    <Compile Include="NodeActor.cs" />
-    <Compile Include="NodeActorFactory.cs" />
+    <Compile Include="Messages\AddRequest.cs" />
+    <Compile Include="Messages\AddResult.cs" />
+    <Compile Include="ActorFactory\ICustomActorFactory.cs" />
+    <Compile Include="Actors\NodeActor.cs" />
+    <Compile Include="ActorFactory\NodeActorFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TreeActor.cs" />
+    <Compile Include="Actors\TreeActor.cs" />
+    <Compile Include="Messages\VisitRequest.cs" />
+    <Compile Include="Messages\VisitResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
