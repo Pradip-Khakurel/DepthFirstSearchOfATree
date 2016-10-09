@@ -124,12 +124,12 @@ namespace DepthFirstSearchOfATree.UnitTesting
             var child1 = child1Factory.Probe;
             var child2 = child2Factory.Probe;
 
-            child1.ExpectMsg<VisitRequest>(m1 => { // child1 receives the VisitRequest first ...
-                m1.Sender.Tell(new VisitResult(m1));
+            child1.ExpectMsg<VisitRequest>(m => { // child1 receives the VisitRequest first ...
+                m.Sender.Tell(new VisitResult(m));
             });
 
-            child2.ExpectMsg<VisitRequest>(m2 => { // then child2 receives the VisitRequest ...
-                m2.Sender.Tell(new VisitResult(m2));  
+            child2.ExpectMsg<VisitRequest>(m => { // then child2 receives the VisitRequest ...
+                m.Sender.Tell(new VisitResult(m));  
             });
 
             this.ExpectMsg<VisitResult>(); // and then NodeActor sends back VisitResult
