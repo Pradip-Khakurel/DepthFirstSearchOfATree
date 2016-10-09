@@ -60,7 +60,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
         public void NodeActor_not_should_send_VisitRequest_to_its_second_child_without_receiving_VisitResult_from_the_first_one()
         {
             var nodeActor = Sys.ActorOf(Props.Create(() => new NodeActor("node")));
-            var child1Factory = new BlackHoleActorFactory("child1");
+            var child1Factory = new BlackHoleActorFactory("child1"); // child1 will not respond to anything
             var child2Factory = new TestProbeFactory("child2");
 
             // adding child1
