@@ -34,19 +34,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
             rootFactory.Probe.ExpectMsg<VisitRequest>();
         }
 
-        // [Fact]
-        public void TreeActor_should_throw_exception_when_receiving_the_same_AddRequest_twice()
-        {
-            var rootFactory = new TestProbeFactory("root");
-            var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
-
-            tree.Tell(new AddRequest("child", "root", tree));
-            tree.Tell(new AddRequest("child", "root", tree));
-
-            EventFilter.Exception<InvalidOperationException>().Expect(1, () => { });
-        }
-
-        // [Fact]
+        [Fact]
         public void TreeActor_should_throw_exception_when_receiving_an_AddRequest_for_an_nonexisting_child()
         {
             var rootFactory = new TestProbeFactory("root");
@@ -55,7 +43,19 @@ namespace DepthFirstSearchOfATree.UnitTesting
             tree.Tell(new AddRequest("child1", "root", tree));
             tree.Tell(new AddRequest("childOfChild2", "child2", tree));
 
-            EventFilter.Exception<InvalidOperationException>().Expect(1, () => { });
+            EventFilter.Exception<InvalidOperationException>().ExpectOne(() => { });
+        }
+
+        [Fact]
+        public void TreeActor_should_throw_exception_when_receiving_the_same_AddRequest_twice()
+        {
+            var rootFactory = new TestProbeFactory("root");
+            var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
+
+            tree.Tell(new AddRequest("child", "root", tree));
+            tree.Tell(new AddRequest("child", "root", tree));
+
+            EventFilter.Exception<InvalidOperationException>().ExpectOne(() => { });
         }
 
         [Fact]
