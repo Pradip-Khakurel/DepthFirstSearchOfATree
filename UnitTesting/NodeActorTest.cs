@@ -11,7 +11,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
         public void NodeActor_should_send_AddResult_to_the_TreeActor_when_the_message_is_for_him()
         {
             var nodeActor = Sys.ActorOf(Props.Create(() => new NodeActor("node")));
-            var childFactory = new TestProbeFactory("child");
+            var childFactory = new TestProbeFactory("child", this);
 
             // adding child
             nodeActor.Tell(new AddRequest(childFactory, "node", this.TestActor)); // TestActor is TreeActor
@@ -25,7 +25,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
         public void NodeActor_should_not_send_AddResult_to_the_TreeActor_when_the_message_is_not_for_him()
         {
             var nodeActor = Sys.ActorOf(Props.Create(() => new NodeActor("node")));
-            var childFactory = new TestProbeFactory("child");
+            var childFactory = new TestProbeFactory("child", this);
 
             // adding to an other node
             nodeActor.Tell(new AddRequest(childFactory, "otherNode", this.TestActor));
@@ -37,7 +37,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
         public void NodeActor_should_always_send_VisitRequest_to_its_child()
         {
             var nodeActor = Sys.ActorOf(Props.Create(() => new NodeActor("node")));
-            var child1Factory = new TestProbeFactory("child1");
+            var child1Factory = new TestProbeFactory("child1", this);
 
             // adding child1
             nodeActor.Tell(new AddRequest(child1Factory, "node", this.TestActor));
@@ -55,8 +55,8 @@ namespace DepthFirstSearchOfATree.UnitTesting
         public void NodeActor_not_should_send_VisitRequest_to_its_second_child_without_receiving_VisitResult_from_the_first_one()
         {
             var nodeActor = Sys.ActorOf(Props.Create(() => new NodeActor("node")));
-            var child1Factory = new BlackHoleActorFactory("child1"); // child1 will not respond to anything
-            var child2Factory = new TestProbeFactory("child2");
+            var child1Factory = new BlackHoleActorFactory("child1", this); // child1 will not respond to anything
+            var child2Factory = new TestProbeFactory("child2", this);
 
             // adding child1
             nodeActor.Tell(new AddRequest(child1Factory, "node", this.TestActor));
@@ -75,8 +75,8 @@ namespace DepthFirstSearchOfATree.UnitTesting
         public void NodeActor_should_send_VisitRequest_to_the_second_child_when_receiving_VisitResult_from_the_first_one()
         {
             var nodeActor = Sys.ActorOf(Props.Create(() => new NodeActor("node")));
-            var child1Factory = new TestProbeFactory("child1");
-            var child2Factory = new TestProbeFactory("child2");
+            var child1Factory = new TestProbeFactory("child1", this);
+            var child2Factory = new TestProbeFactory("child2", this);
 
             // adding child1
             nodeActor.Tell(new AddRequest(child1Factory, "node", this.TestActor));
@@ -102,8 +102,8 @@ namespace DepthFirstSearchOfATree.UnitTesting
         public void NodeActor_should_send_VisitResult_to_its_parent_after_receiving_VisitRequest_from_its_last_child()
         {
             var nodeActor = Sys.ActorOf(Props.Create(() => new NodeActor("node")));
-            var child1Factory = new TestProbeFactory("child1");
-            var child2Factory = new TestProbeFactory("child2");
+            var child1Factory = new TestProbeFactory("child1", this);
+            var child2Factory = new TestProbeFactory("child2", this);
 
             // adding child1 - TestActor is the parent of NodeActor
             nodeActor.Tell(new AddRequest(child1Factory, "node", this.TestActor));

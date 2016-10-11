@@ -5,16 +5,16 @@ using DepthFirstSearchOfATree.AkkaDotNetExample;
 
 namespace DepthFirstSearchOfATree.UnitTesting
 {
-    public class TestProbeFactory : TestKit, ICustomActorFactory
+    public class TestProbeFactory : ICustomActorFactory
     {
         public string ActorName { get; }
 
         public TestProbe Probe { get; }
 
-        public TestProbeFactory(string nodeName)
+        public TestProbeFactory(string nodeName, TestKit testKit)
         {
             ActorName = nodeName;
-            Probe = CreateTestProbe(nodeName);
+            Probe = testKit.CreateTestProbe(nodeName);
         }
 
         public IActorRef Create(IActorRefFactory refFactory)

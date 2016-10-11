@@ -118,11 +118,11 @@ namespace DepthFirstSearchOfATree.AkkaDotNetExample
         {
             if (_exisitingNodes.Contains(request.ParentName) == false)
             {
-                throw new InvalidOperationException($"Node {request.ParentName} does not exist");
+                throw new InvalidRequestException($"Node {request.ParentName} does not exist");
             }
             else if (_exisitingNodes.Contains(request.ChildFactory.ActorName) == true)
             {
-                throw new InvalidOperationException($"Node {request.ChildFactory.ActorName} already exists!");
+                throw new InvalidRequestException($"Node {request.ChildFactory.ActorName} already exists!");
             }
         }
 

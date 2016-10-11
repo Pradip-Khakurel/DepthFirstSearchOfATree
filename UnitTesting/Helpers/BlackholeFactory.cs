@@ -9,17 +9,17 @@ namespace DepthFirstSearchOfATree.UnitTesting
     {
         public string ActorName { get;  }
 
-        public IActorRef ActorRef { get; }
+        public IActorRef Hole { get; }
 
-        public BlackHoleActorFactory(string actorName)
+        public BlackHoleActorFactory(string actorName, TestKit testKit)
         {
             ActorName = actorName;
-            ActorRef = Sys.ActorOf(BlackHoleActor.Props);
+            Hole = testKit.Sys.ActorOf(BlackHoleActor.Props);
         }
 
         public IActorRef Create(IActorRefFactory refFactory)
         {
-            return ActorRef;
+            return Hole;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
         [Fact]
         public void TreeActor_should_send_an_AddRequest_to_its_root()
         {
-            var rootFactory = new TestProbeFactory("root");
+            var rootFactory = new TestProbeFactory("root", this);
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
             tree.Tell(new AddRequest("child", "root", tree));
@@ -22,7 +22,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
         [Fact]
         public void TreeActor_should_send_a_VisitRequest_to_its_root()
         {
-            var rootFactory = new TestProbeFactory("root");
+            var rootFactory = new TestProbeFactory("root", this);
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
             tree.Tell(new VisitRequest());
@@ -31,33 +31,33 @@ namespace DepthFirstSearchOfATree.UnitTesting
         }
 
         [Fact]
+        public void TreeActor_should_throw_exception_when_receiving_the_same_AddRequest_twice()
+        {
+            var tree = Sys.ActorOf(Props.Create(() => new TreeActor("root")), "tree");
+
+            tree.Tell(new AddRequest("child", "root", tree));
+            tree.Tell(new AddRequest("child", "root", tree));
+
+            EventFilter.Exception<InvalidRequestException>().ExpectOne(() => { });
+        }
+
+
+        [Fact]
         public void TreeActor_should_throw_exception_when_receiving_an_AddRequest_for_an_nonexisting_child()
         {
-            var rootFactory = new TestProbeFactory("root");
-            var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
+            var tree = Sys.ActorOf(Props.Create(() => new TreeActor("root")), "tree");
 
             tree.Tell(new AddRequest("child1", "root", tree));
             tree.Tell(new AddRequest("childOfChild2", "child2", tree));
 
-            EventFilter.Exception<InvalidOperationException>().ExpectOne(() => { });
+            EventFilter.Exception<InvalidRequestException>().ExpectOne(() => { });
         }
 
-        [Fact]
-        public void TreeActor_should_throw_exception_when_receiving_the_same_AddRequest_twice()
-        {
-            var rootFactory = new TestProbeFactory("root");
-            var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
-
-            tree.Tell(new AddRequest("child", "root", tree));
-            tree.Tell(new AddRequest("child", "root", tree));
-
-            EventFilter.Exception<InvalidOperationException>().ExpectOne(() => { });
-        }
 
         [Fact]
         public void TreeActor_should_stop_sending_messages_while_busy_processing_AddRequest()
         {
-            var rootFactory = new TestProbeFactory("root");
+            var rootFactory = new TestProbeFactory("root", this);
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
             tree.Tell(new AddRequest("child1", "root", tree));
@@ -71,7 +71,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
         [Fact]
         public void TreeActor_should_stop_sending_messages_while_busy_processing_VisitRequest()
         {
-            var rootFactory = new TestProbeFactory("root");
+            var rootFactory = new TestProbeFactory("root", this);
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
 
             tree.Tell(new VisitRequest()); 
@@ -85,7 +85,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
         [Fact]
         public void TreeActor_should_process_next_message_after_receiving_AddResult_from_its_root()
         {
-            var rootFactory = new TestProbeFactory("root");
+            var rootFactory = new TestProbeFactory("root", this);
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
             var probe = rootFactory.Probe;
 
@@ -104,7 +104,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
         [Fact]
         public void TreeActor_should_process_next_message_after_receiving_VisitResult_from_its_root()
         {
-            var rootFactory = new TestProbeFactory("root");
+            var rootFactory = new TestProbeFactory("root", this);
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
             var probe = rootFactory.Probe;
 
