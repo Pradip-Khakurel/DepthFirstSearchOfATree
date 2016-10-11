@@ -50,7 +50,6 @@ namespace DepthFirstSearchOfATree.UnitTesting
             child1.ExpectMsg<VisitRequest>();
         }
 
-
         [Fact]
         public void NodeActor_not_should_send_VisitRequest_to_its_second_child_without_receiving_VisitResult_from_the_first_one()
         {
