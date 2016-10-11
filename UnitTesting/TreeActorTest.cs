@@ -1,15 +1,14 @@
 ﻿using Akka.Actor;
-using Akka.TestKit.NUnit3;
+using Akka.TestKit.Xunit2;
 using DepthFirstSearchOfATree.AkkaDotNetExample;
-using NUnit.Framework;
 using System;
+using Xunit;
 
 namespace DepthFirstSearchOfATree.UnitTesting
 {
-    [TestFixture]
     public class TreeActorTest : TestKit
     {
-        [Test]
+        [Fact]
         public void TreeActor_should_send_an_AddRequest_to_its_root()
         {
             var rootFactory = new TestProbeFactory("root");
@@ -20,7 +19,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
             rootFactory.Probe.ExpectMsg<AddRequest>();
         }
 
-        [Test]
+        [Fact]
         public void TreeActor_should_send_a_VisitRequest_to_its_root()
         {
             var rootFactory = new TestProbeFactory("root");
@@ -31,7 +30,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
             rootFactory.Probe.ExpectMsg<VisitRequest>();
         }
 
-        [Test]
+        [Fact]
         public void TreeActor_should_throw_exception_when_receiving_an_AddRequest_for_an_nonexisting_child()
         {
             var rootFactory = new TestProbeFactory("root");
@@ -43,7 +42,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
             EventFilter.Exception<InvalidOperationException>().ExpectOne(() => { });
         }
 
-        [Test]
+        [Fact]
         public void TreeActor_should_throw_exception_when_receiving_the_same_AddRequest_twice()
         {
             var rootFactory = new TestProbeFactory("root");
@@ -55,7 +54,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
             EventFilter.Exception<InvalidOperationException>().ExpectOne(() => { });
         }
 
-        [Test]
+        [Fact]
         public void TreeActor_should_stop_sending_messages_while_busy_processing_AddRequest()
         {
             var rootFactory = new TestProbeFactory("root");
@@ -69,7 +68,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
             rootFactory.Probe.ExpectNoMsg();
         }
 
-        [Test]
+        [Fact]
         public void TreeActor_should_stop_sending_messages_while_busy_processing_VisitRequest()
         {
             var rootFactory = new TestProbeFactory("root");
@@ -83,7 +82,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
             rootFactory.Probe.ExpectNoMsg();
         }
 
-        [Test]
+        [Fact]
         public void TreeActor_should_process_next_message_after_receiving_AddResult_from_its_root()
         {
             var rootFactory = new TestProbeFactory("root");
@@ -102,7 +101,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
             });
         }
 
-        [Test]
+        [Fact]
         public void TreeActor_should_process_next_message_after_receiving_VisitResult_from_its_root()
         {
             var rootFactory = new TestProbeFactory("root");
