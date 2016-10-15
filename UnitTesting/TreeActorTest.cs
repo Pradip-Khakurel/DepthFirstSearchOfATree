@@ -41,7 +41,6 @@ namespace DepthFirstSearchOfATree.UnitTesting
             EventFilter.Exception<InvalidRequestException>().ExpectOne(() => { });
         }
 
-
         [Fact]
         public void TreeActor_should_throw_exception_when_receiving_an_AddRequest_for_an_nonexisting_child()
         {

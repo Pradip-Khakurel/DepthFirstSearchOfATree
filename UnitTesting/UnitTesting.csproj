@@ -79,7 +79,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers\BlackholeFactory.cs" />
     <Compile Include="Helpers\TestProbeFactory.cs" />
     <Compile Include="NodeActorTest.cs" />
     <Compile Include="TreeActorTest.cs" />
