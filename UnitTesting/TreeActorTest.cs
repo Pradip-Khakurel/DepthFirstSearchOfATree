@@ -82,7 +82,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
         }
 
         [Fact]
-        public void TreeActor_should_process_next_message_after_receiving_AddResult_from_its_root()
+        public void TreeActor_should_process_oldest_not_treated_after_receiving_AddResult_from_its_root()
         {
             var rootFactory = new TestProbeFactory("root", this);
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
@@ -101,7 +101,7 @@ namespace DepthFirstSearchOfATree.UnitTesting
         }
 
         [Fact]
-        public void TreeActor_should_process_next_message_after_receiving_VisitResult_from_its_root()
+        public void TreeActor_should_process_oldest_not_treated_after_receiving_VisitResult_from_its_root()
         {
             var rootFactory = new TestProbeFactory("root", this);
             var tree = Sys.ActorOf(Props.Create(() => new TreeActor(rootFactory)), "tree");
